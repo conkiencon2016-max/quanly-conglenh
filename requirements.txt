@@ -1,0 +1,6 @@
+flask
+gunicorn
+python-docx
+pandas
+openpyxl
+reportlab
