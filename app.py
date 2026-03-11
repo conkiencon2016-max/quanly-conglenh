@@ -33,6 +33,9 @@ from openpyxl.styles import PatternFill
 
 
 app = Flask(__name__)
+@app.route("/")
+def index():
+    return redirect("/login")
 app.secret_key = "conglenh_secret_key"
 
 # ⏳ Auto logout 30 phút
@@ -112,9 +115,7 @@ def login_required():
 
 def check_role(roles):
     return session.get("role") in roles
-@app.route("/")
-def index():
-    return redirect("/login")
+
 # ================= LOGIN =================
 @app.route("/login", methods=["GET","POST"])
 def login():
@@ -1356,3 +1357,4 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
 
     app.run(host="0.0.0.0", port=port)
+
