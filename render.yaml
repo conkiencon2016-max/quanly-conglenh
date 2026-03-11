@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: conglenh-system
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
