@@ -8,10 +8,7 @@ import tempfile
 import os
 import uuid
 import pandas as pd
-import pythoncom
-
 from docx import Document
-from docx2pdf import convert
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
@@ -45,7 +42,7 @@ DB = "conglenh.db"
 
 # ================= DATABASE =================
 def init_db():
-    sqlite3.connect(DB, timeout=30)
+    conn = sqlite3.connect(DB, timeout=30)
     c = conn.cursor()
 
 # ===== BẢNG NGƯỜI ĐI CÔNG TÁC =====
@@ -1357,4 +1354,5 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
 
     app.run(host="0.0.0.0", port=port)
+
 
