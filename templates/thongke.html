@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="card p-4 card-dashboard">
+
+<h4 class="mb-3">📊 Thống kê công lệnh</h4>
+
+<form method="post" class="row g-3 mb-4" id="formThongKe">
+
+    <div class="col-md-3">
+        <label>Từ ngày</label>
+        <input type="date" name="tu_ngay"
+               value="{{ request.form.tu_ngay }}"
+               class="form-control">
+    </div>
+
+    <div class="col-md-3">
+        <label>Đến ngày</label>
+        <input type="date" name="den_ngay"
+               value="{{ request.form.den_ngay }}"
+               class="form-control">
+    </div>
+
+    <div class="col-md-3">
+        <label>Họ tên</label>
+        <input name="ho_ten"
+               value="{{ request.form.ho_ten }}"
+               class="form-control">
+    </div>
+
+    <div class="col-md-3 d-flex align-items-end">
+    <div class="d-flex gap-2 w-100">
+
+        <button type="submit" class="btn btn-primary w-50">
+            <i class="bi bi-filter"></i> Lọc
+        </button>
+
+        <a href="/export_thongke?tu_ngay={{request.form.tu_ngay}}&den_ngay={{request.form.den_ngay}}&ten={{request.form.ho_ten}}"
+           class="btn btn-success w-50">
+           <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+        </a>
+
+    </div>
+</div>
+</form>
+
+<table class="table table-bordered">
+<thead class="table-secondary">
+<tr>
+<th>Số CL</th>
+<th>Họ tên</th>
+<th>Nơi đến</th>
+<th>Ngày đi</th>
+<th>Ngày về</th>
+<th>Người ký</th>
+</tr>
+</thead>
+<tbody>
+{% for row in data %}
+<tr>
+<td>{{ row['so_cong_lenh'] }}</td>
+<td>{{ row['ho_ten'] }}</td>
+<td>{{ row['noi_den'] }}</td>
+<td>{{ row['ngay_di'] }}</td>
+<td>{{ row['ngay_ve'] }}</td>
+<td>{{ row['nguoi_ky'] }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% if data %}
+<div class="mt-2 text-end fw-bold">
+Tổng số công lệnh: {{ data|length }}
+</div>
+{% endif %}
+
+</div>
+
+
+{% endblock %}

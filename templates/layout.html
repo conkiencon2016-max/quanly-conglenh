@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Quản lý công lệnh</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+body{ background:#f4f6f9; }
+
+.sidebar{
+    width:240px;
+    position:fixed;
+    height:100%;
+    background:#1e293b;
+    padding-top:20px;
+}
+
+.sidebar a{
+    display:block;
+    padding:12px 20px;
+    color:white;
+    text-decoration:none;
+    transition:0.2s;
+}
+
+.sidebar a:hover{ background:#334155; }
+
+.active-menu{ background:#2563eb !important; }
+
+.disabled-link{
+    pointer-events:none;
+    opacity:0.5;
+    cursor:not-allowed;
+}
+
+.lock-icon{
+    float:right;
+    font-size:14px;
+}
+
+.content{
+    margin-left:240px;
+    padding:20px;
+}
+
+.topbar{
+    margin-left:240px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h5 class="text-center text-white mb-3">🚗 Công Lệnh</h5>
+
+    <a href="/" class="{% if request.path == '/' %}active-menu{% endif %}">
+       Trang chủ
+    </a>
+
+    <a href="/nhap"
+       class="{% if request.path == '/nhap' %}active-menu{% endif %}
+       {% if session.get('role') not in ['admin','user'] %} disabled-link{% endif %}"
+       {% if session.get('role') not in ['admin','user'] %}
+       data-bs-toggle="tooltip" title="Bạn không có quyền"
+       {% endif %}>
+       Nhập công lệnh
+       {% if session.get('role') not in ['admin','user'] %}
+       <i class="bi bi-lock-fill lock-icon"></i>
+       {% endif %}
+    </a>
+
+    <a href="/danhsach"
+       class="{% if request.path == '/danhsach' %}active-menu{% endif %}
+       {% if session.get('role') != 'admin' %} disabled-link{% endif %}"
+       {% if session.get('role') != 'admin' %}
+       data-bs-toggle="tooltip" title="Bạn không có quyền"
+       {% endif %}>
+       Quản lý công lệnh
+       {% if session.get('role') != 'admin' %}
+       <i class="bi bi-lock-fill lock-icon"></i>
+       {% endif %}
+    </a>
+    <a href="/quanly_nguoidicongtac"
+       class="{% if request.path == '/quanly_nguoidicongtac' %}active-menu{% endif %}
+       {% if session.get('role') != 'admin' %} disabled-link{% endif %}"
+       {% if session.get('role') != 'admin' %}
+       data-bs-toggle="tooltip" title="Bạn không có quyền"
+       {% endif %}>
+       Quản lý cán bộ
+       {% if session.get('role') != 'admin' %}
+       <i class="bi bi-lock-fill lock-icon"></i>
+       {% endif %}
+    </a>
+
+
+    <a href="/thongke"
+       class="{% if request.path == '/thongke' %}active-menu{% endif %}">
+       Thống kê
+    </a>
+</div>
+
+<!-- TOPBAR -->
+<nav class="navbar navbar-light bg-white shadow-sm px-4 topbar">
+    <div class="ms-auto dropdown">
+        <a class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle"
+           href="#" role="button" data-bs-toggle="dropdown">
+            <img src="https://i.pravatar.cc/40"
+                 class="rounded-circle me-2" width="35">
+            {{ session.get('user') }}
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li>
+                <a class="dropdown-item" href="/change_password">
+                    <i class="bi bi-key"></i> Đổi mật khẩu
+                </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <a class="dropdown-item text-danger"
+                   data-bs-toggle="modal"
+                   data-bs-target="#logoutModal">
+                   <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- CONTENT -->
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+<!-- LOGOUT MODAL -->
+<div class="modal fade" id="logoutModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Xác nhận đăng xuất</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Bạn có muốn đăng xuất không?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <a href="/logout" class="btn btn-danger">Đăng xuất</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+})
+</script>
+
+</body>
+</html>

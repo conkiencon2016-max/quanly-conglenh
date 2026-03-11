@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="card p-4 card-dashboard">
+<h4>✏️ Sửa công lệnh</h4>
+
+<form method="post">
+<div class="mb-3">
+<label>Họ tên</label>
+<input name="ho_ten" class="form-control" value="{{row['ho_ten']}}">
+</div>
+
+<div class="mb-3">
+<label>Chức vụ</label>
+<input name="chuc_vu" class="form-control" value="{{row['chuc_vu']}}">
+</div>
+
+<div class="mb-3">
+<label>Nơi đến</label>
+<input name="noi_den" class="form-control" value="{{row['noi_den']}}">
+</div>
+
+<div class="mb-3">
+<label>Ngày đi</label>
+<input type="date" name="ngay_di" class="form-control" value="{{row['ngay_di']}}">
+</div>
+
+<div class="mb-3">
+<label>Ngày về</label>
+<input type="date" name="ngay_ve" class="form-control" value="{{row['ngay_ve']}}">
+</div>
+
+<div class="mb-3">
+<label>Ngày ký</label>
+<input type="date" name="ngay_ky" class="form-control" value="{{row['ngay_ky']}}">
+</div>
+
+<div class="mb-3">
+<label>Người ký</label>
+<input name="nguoi_ky" class="form-control" value="{{row['nguoi_ky']}}">
+</div>
+
+<button class="btn btn-primary">Lưu thay đổi</button>
+<a href="/danhsach" class="btn btn-secondary">Quay lại</a>
+</form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Nhập công lệnh</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+    font-family:Segoe UI,Arial;
+    margin:0;
+    background:url("/static/tru_so.jpg") center/cover fixed;
+}
+
+.overlay{
+    min-height:100vh;
+    background:rgba(255,255,255,0.95);
+    padding:30px 20px;
+}
+
+.form-box{
+    max-width:760px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:14px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
+    animation:fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+h3{
+    text-align:center;
+    margin-bottom:20px;
+    color:#1f2937;
+}
+
+.form-group{ margin-bottom:16px; }
+
+label{ font-weight:600; }
+
+input{
+    width:100%;
+    padding:9px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    transition:0.2s;
+}
+
+input:focus{
+    border-color:#2563EB;
+    box-shadow:0 0 0 2px rgba(37,99,235,0.2);
+    outline:none;
+}
+
+input.error{
+    border:2px solid red;
+    background:#fff5f5;
+}
+
+.error-text{
+    color:red;
+    font-size:13px;
+    margin-top:4px;
+}
+
+.alert-success{
+    background:#d1fae5;
+    color:#065f46;
+    padding:10px;
+    border-radius:6px;
+    margin-bottom:15px;
+    text-align:center;
+}
+
+.alert-error{
+    background:#fee2e2;
+    color:#991b1b;
+    padding:10px;
+    border-radius:6px;
+    margin-bottom:15px;
+    text-align:center;
+}
+
+.btn{
+    padding:10px 18px;
+    border:none;
+    border-radius:8px;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.btn:hover{ opacity:0.9; }
+
+.btn-save{ background:#059669; }
+.btn-next{ background:#2563EB; }
+.btn-print{ background:#B45309; }
+.btn-home{ background:#374151; }
+
+.btn-group{
+    margin-top:20px;
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+</style>
+</head>
+
+<body>
+<div class="overlay">
+<div class="form-box">
+
+<h3>📄 NHẬP CÔNG LỆNH</h3>
+
+{% if success %}
+<div class="alert-success">✔ Đã lưu công lệnh thành công</div>
+{% endif %}
+
+{% if error %}
+<div class="alert-error">{{ error }}</div>
+{% endif %}
+
+<form id="formCL" method="post" action="/nhap">
+
+<input type="hidden" name="action" id="action">
+
+<div class="form-group">
+<label>Số công lệnh</label>
+<input name="so_cong_lenh" value="{{ so_cong_lenh }}" readonly>
+
+</div>
+
+<div class="form-group">
+<label>Họ và tên *</label>
+<div style="display:flex; gap:6px;">
+<input name="ho_ten" id="ho_ten"
+       value="{{ form_data.ho_ten if form_data }}"
+       readonly style="flex:1;">
+<button type="button" onclick="openNguoiDi()">Chọn</button>
+</div>
+<div class="error-text" id="err_ho_ten"></div>
+</div>
+
+<div class="form-group">
+<label>Chức vụ *</label>
+<input name="chuc_vu" id="chuc_vu"
+       value="{{ form_data.chuc_vu if form_data }}">
+<div class="error-text" id="err_chuc_vu"></div>
+</div>
+
+<div class="form-group">
+<label>Nơi đến *</label>
+<input name="noi_den" id="noi_den"
+       value="{{ form_data.noi_den if form_data }}">
+<div class="error-text" id="err_noi_den"></div>
+</div>
+
+<div class="form-group">
+<label>Ngày đi *</label>
+<input type="date" name="ngay_di" id="ngay_di"
+       value="{{ form_data.ngay_di if form_data }}">
+<div class="error-text" id="err_ngay_di"></div>
+</div>
+
+<div class="form-group">
+<label>Ngày về *</label>
+<input type="date" name="ngay_ve" id="ngay_ve"
+       value="{{ form_data.ngay_ve if form_data }}">
+<div class="error-text" id="err_ngay_ve"></div>
+</div>
+
+<div class="form-group">
+<label>Ngày ký *</label>
+<input type="date" name="ngay_ky" id="ngay_ky"
+       value="{{ form_data.ngay_ky if form_data }}">
+<div class="error-text" id="err_ngay_ky"></div>
+</div>
+
+<div class="form-group">
+<label>Người ký *</label>
+<div style="display:flex; gap:6px;">
+<input name="nguoi_ky" id="nguoi_ky"
+       value="{{ form_data.nguoi_ky if form_data }}"
+       readonly style="flex:1;">
+<button type="button" onclick="openNguoiKy()">Chọn</button>
+</div>
+<div class="error-text" id="err_nguoi_ky"></div>
+</div>
+
+<div class="btn-group">
+<button type="button" class="btn btn-save" onclick="saveForm()">💾 Lưu</button>
+<button type="button" class="btn btn-next" onclick="nextForm()">➡ Next</button>
+<button type="button" class="btn btn-print" onclick="printWord()">🖨️ In</button>
+<button type="button" class="btn btn-home" onclick="goBack()">⬅ Quay lại</button>
+</div>
+
+</form>
+</div>
+</div>
+
+<script>
+
+// Auto focus + auto ngày ký hôm nay
+window.onload = function(){
+    document.getElementById("ho_ten").focus();
+
+    const ngayKy = document.getElementById("ngay_ky");
+    if(!ngayKy.value){
+        const today = new Date().toISOString().split("T")[0];
+        ngayKy.value = today;
+    }
+};
+
+function clearErrors(){
+    document.querySelectorAll("input").forEach(i=>{
+        i.classList.remove("error");
+    });
+    document.querySelectorAll(".error-text").forEach(e=>{
+        e.innerText="";
+    });
+}
+
+function goBack(){
+    if(document.referrer){
+        window.history.back();
+    }else{
+        window.location.href="/";
+    }
+}
+
+function validate(){
+    clearErrors();
+    let valid = true;
+
+    const required = [
+        "ho_ten","chuc_vu","noi_den",
+        "ngay_di","ngay_ve","ngay_ky","nguoi_ky"
+    ];
+
+    required.forEach(id=>{
+        let el = document.getElementById(id);
+        if(!el.value){
+            el.classList.add("error");
+            document.getElementById("err_"+id).innerText =
+                "Trường này không được để trống";
+            valid=false;
+        }
+    });
+
+    let ngay_di = document.getElementById("ngay_di").value;
+    let ngay_ve = document.getElementById("ngay_ve").value;
+
+    if(ngay_di && ngay_ve && ngay_ve < ngay_di){
+        document.getElementById("ngay_ve").classList.add("error");
+        document.getElementById("err_ngay_ve").innerText =
+            "Ngày về không được nhỏ hơn ngày đi";
+        valid=false;
+    }
+
+    return valid;
+}
+
+function saveForm(){
+    if(validate()){
+        document.getElementById("action").value = "save";
+        document.getElementById("formCL").submit();
+    }
+}
+
+function nextForm(){
+    if(!validate()) return;
+
+    if(confirm("Bạn có muốn lưu và sang công lệnh tiếp theo?")){
+        document.getElementById("action").value = "next";
+        document.getElementById("formCL").submit();
+    }
+}
+
+function printPDF(){
+    if(!validate()) return;
+
+    const form = document.getElementById("formCL");
+    const data = new FormData(form);
+
+    fetch("/in_pdf_form",{
+        method:"POST",
+        body:data
+    })
+    .then(res=>{
+        if(!res.ok){
+            throw new Error("Lỗi khi tạo PDF");
+        }
+        return res.blob();
+    })
+    .then(blob=>{
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+        setTimeout(()=> URL.revokeObjectURL(url), 1000);
+    })
+    .catch(err=>{
+        alert("Không thể in PDF. Vui lòng thử lại!");
+        console.error(err);
+    });
+}
+
+
+function printWord(){
+    if(!validate()) return;
+
+    const form = document.getElementById("formCL");
+    const data = new FormData(form);
+
+    fetch("/in_word_form",{
+        method:"POST",
+        body:data
+    })
+    .then(res => res.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "conglenh.docx";
+        a.click();
+    });
+}
+</script>
+<script>
+
+let mode = "";
+
+
+// Tìm kiếm
+document.addEventListener("input", function(e){
+    if(e.target.id=="searchBox"){
+        let value = e.target.value.toLowerCase();
+        let items = document.querySelectorAll("#dsCanBo div");
+
+        items.forEach(div=>{
+            div.style.display =
+                div.innerText.toLowerCase().includes(value)
+                ? "block" : "none";
+        });
+    }
+});
+
+function openNguoiDi(){
+
+    document.getElementById("popup").style.display="block";
+
+    fetch("/api/nguoidicongtac?ts=" + new Date().getTime())
+    .then(res=>res.json())
+    .then(data=>{
+        let html="";
+        data.forEach(cb=>{
+            html+=`
+            <div onclick="chonNguoiDi('${cb.ho_ten}','${cb.chuc_vu}')"
+                 style="padding:6px; cursor:pointer; border-bottom:1px solid #ddd;">
+                <b>${cb.ho_ten}</b><br>
+                <small>${cb.chuc_vu}</small>
+            </div>`;
+        });
+        document.getElementById("dsCanBo").innerHTML=html;
+    });
+}
+
+function chonNguoiDi(ten,chucvu){
+    document.getElementById("ho_ten").value = ten;
+    document.getElementById("chuc_vu").value = chucvu;
+    closePopup();
+}
+
+
+function openNguoiKy(){
+    document.getElementById("popup").style.display="block";
+
+    fetch("/api/nguoiky")
+    .then(res=>res.json())
+    .then(data=>{
+        let html="";
+        data.forEach(cb=>{
+            html+=`
+            <div onclick="chonNguoiKy('${cb.ho_ten}')"
+                 style="padding:6px; cursor:pointer; border-bottom:1px solid #ddd;">
+                <b>${cb.ho_ten}</b>
+            </div>`;
+        });
+        document.getElementById("dsCanBo").innerHTML=html;
+    });
+}
+
+function chonNguoiKy(ten){
+    document.getElementById("nguoi_ky").value = ten;
+    closePopup();
+}
+function closePopup(){
+    document.getElementById("popup").style.display="none";
+}
+</script>
+
+
+<!-- POPUP CÁN BỘ -->
+<div id="popup" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.5);
+z-index:9999;
+">
+
+<div style="
+background:white;
+width:520px;
+margin:100px auto;
+padding:20px;
+border-radius:10px;
+max-height:500px;
+overflow:auto;
+">
+
+<h4>Chọn cán bộ</h4>
+
+<input type="text" id="searchBox"
+       placeholder="Tìm kiếm..."
+       style="width:100%; padding:6px; margin-bottom:10px;">
+
+<div id="dsCanBo"></div>
+
+<div style="text-align:right; margin-top:10px;">
+<button onclick="closePopup()">Đóng</button>
+</div>
+
+</div>
+</div>
+</body>
+</html>
