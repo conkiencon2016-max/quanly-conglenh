@@ -112,7 +112,9 @@ def login_required():
 
 def check_role(roles):
     return session.get("role") in roles
-
+@app.route("/")
+def index():
+    return redirect("/login")
 # ================= LOGIN =================
 @app.route("/login", methods=["GET","POST"])
 def login():
@@ -1352,4 +1354,5 @@ def xoa_nguoidicongtac(id):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
+
     app.run(host="0.0.0.0", port=port)
