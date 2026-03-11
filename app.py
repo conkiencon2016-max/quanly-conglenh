@@ -26,13 +26,11 @@ from openpyxl.utils import get_column_letter
 from io import BytesIO
 from flask import after_this_request
 from openpyxl.styles import PatternFill
-
+from io import BytesIO
 
 
 app = Flask(__name__)
-@app.route("/")
-def index():
-    return redirect("/login")
+
 app.secret_key = "conglenh_secret_key"
 
 # ⏳ Auto logout 30 phút
@@ -990,225 +988,6 @@ def in_word(id):
         as_attachment=True,
         download_name="conglenh.docx"
     )
-# ================= IN PDF THEO ID =================
-@app.route("/in_pdf_1/<int:id>")
-def in_pdf_1(id):
-    conn = sqlite3.connect(DB)
-    conn.row_factory = sqlite3.Row
-    c = conn.cursor()
-    c.execute("SELECT * FROM conglenh WHERE id=?", (id,))
-    row = c.fetchone()
-    conn.close()
-
-    if not row:
-        return "Không tìm thấy dữ liệu"
-
-    d1 = datetime.strptime(row["ngay_di"], "%Y-%m-%d")
-    d2 = datetime.strptime(row["ngay_ve"], "%Y-%m-%d")
-    d3 = datetime.strptime(row["ngay_ky"], "%Y-%m-%d")
-
-    data = {
-        "{{HOTEN}}": row["ho_ten"],
-        "{{CHUCVU}}": row["chuc_vu"],
-        "{{NOIDEN}}": row["noi_den"],
-        "{{SOCONG}}": row["so_cong_lenh"],
-        "{{NGUOIKY}}": row["nguoi_ky"],
-        "{{NOIDEN_BANG}}": row["noi_den"],
-        "{{NGAYDI}}": f"{d1.day:02}",
-        "{{THANGDI}}": f"{d1.month:02}",
-        "{{NAMDI}}": str(d1.year),
-        "{{NGAYVE}}": f"{d2.day:02}",
-        "{{THANGVE}}": f"{d2.month:02}",
-        "{{NAMVE}}": str(d2.year),
-        "{{NGAYKY}}": f"{d3.day:02}",
-        "{{THANGKY}}": f"{d3.month:02}",
-        "{{NAMKY}}": str(d3.year),
-    }
-
-    temp_dir = tempfile.gettempdir()
-    uid = str(uuid.uuid4())
-    docx_path = os.path.join(temp_dir, f"{uid}.docx")
-    pdf_path = os.path.join(temp_dir, f"{uid}.pdf")
-
-    doc = Document("CL2026.docx")
-
-    replace_advanced(doc, data)
-
-    doc.save(docx_path)
-    convert(docx_path, pdf_path)
-
-    return send_file(pdf_path,
-                     mimetype="application/pdf",
-                     as_attachment=False)
-
-
-# ================= IN PDF TỪ FORM NHẬP =================
-@app.route("/in_pdf_form", methods=["POST"])
-def in_pdf_form():
-
-    pythoncom.CoInitialize()
-
-    try:
-        saved_id = request.form.get("saved_id")
-
-        conn = sqlite3.connect(DB)
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-
-        row = None
-
-        # ================= LẤY TỪ DB NẾU ĐÃ LƯU =================
-        if saved_id:
-            row = c.execute(
-                "SELECT * FROM conglenh WHERE id=?",
-                (saved_id,)
-            ).fetchone()
-
-        conn.close()
-
-        if row:
-            so_display = f"{row['so_thu_tu']:02}"
-            ho_ten = row["ho_ten"]
-            chuc_vu = row["chuc_vu"]
-            noi_den = row["noi_den"]
-            ngay_di = row["ngay_di"]
-            ngay_ve = row["ngay_ve"]
-            ngay_ky = row["ngay_ky"]
-            nguoi_ky = row["nguoi_ky"]
-        else:
-            # In preview từ form
-            so_display = request.form.get("so_cong_lenh", "01")
-            ho_ten = request.form.get("ho_ten", "")
-            chuc_vu = request.form.get("chuc_vu", "")
-            noi_den = request.form.get("noi_den", "")
-            ngay_di = request.form.get("ngay_di")
-            ngay_ve = request.form.get("ngay_ve")
-            ngay_ky = request.form.get("ngay_ky")
-            nguoi_ky = request.form.get("nguoi_ky", "")
-
-        # ================= PARSE NGÀY =================
-        try:
-            d1 = datetime.strptime(ngay_di, "%Y-%m-%d")
-            d2 = datetime.strptime(ngay_ve, "%Y-%m-%d")
-            d3 = datetime.strptime(ngay_ky, "%Y-%m-%d")
-        except:
-            return "Lỗi định dạng ngày!"
-
-        data = {
-            "{{HOTEN}}": ho_ten,
-            "{{CHUCVU}}": chuc_vu,
-            "{{NOIDEN}}": noi_den,
-            "{{SOCONG}}": f"{int(so_display):02}",
-            "{{NGUOIKY}}": nguoi_ky,
-            "{{NOIDEN_BANG}}": noi_den,
-            "{{NGAYDI}}": f"{d1.day:02}",
-            "{{THANGDI}}": f"{d1.month:02}",
-            "{{NAMDI}}": str(d1.year),
-            "{{NGAYVE}}": f"{d2.day:02}",
-            "{{THANGVE}}": f"{d2.month:02}",
-            "{{NAMVE}}": str(d2.year),
-            "{{NGAYKY}}": f"{d3.day:02}",
-            "{{THANGKY}}": f"{d3.month:02}",
-            "{{NAMKY}}": str(d3.year),
-        }
-
-        uid = uuid.uuid4().hex
-        temp_dir = tempfile.gettempdir()
-        docx_path = os.path.join(temp_dir, f"{uid}.docx")
-        pdf_path = os.path.join(temp_dir, f"{uid}.pdf")
-
-        doc = Document("CL2026.docx")
-        replace_advanced(doc, data)
-        doc.save(docx_path)
-
-        convert(docx_path, pdf_path)
-
-        @after_this_request
-        def cleanup(response):
-            try:
-                os.remove(docx_path)
-                os.remove(pdf_path)
-            except:
-                pass
-            pythoncom.CoUninitialize()
-            return response
-
-        return send_file(pdf_path, mimetype="application/pdf")
-
-    except Exception:
-        pythoncom.CoUninitialize()
-        return "Không thể tạo PDF"
-
-# ================= IN PDF TỪ DANH SÁCH =================
-@app.route("/in_pdf/<int:id>")
-def in_pdf(id):
-
-    pythoncom.CoInitialize()
-
-    try:
-        conn = sqlite3.connect(DB)
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-
-        row = c.execute(
-            "SELECT * FROM conglenh WHERE id=?",
-            (id,)
-        ).fetchone()
-
-        conn.close()
-
-        if not row:
-            return "Không tìm thấy công lệnh!"
-
-        d1 = datetime.strptime(row["ngay_di"], "%Y-%m-%d")
-        d2 = datetime.strptime(row["ngay_ve"], "%Y-%m-%d")
-        d3 = datetime.strptime(row["ngay_ky"], "%Y-%m-%d")
-
-        data = {
-            "{{HOTEN}}": row["ho_ten"],
-            "{{CHUCVU}}": row["chuc_vu"],
-            "{{NOIDEN}}": row["noi_den"],
-            "{{SOCONG}}": f"{row['so_thu_tu']:02}",
-            "{{NGUOIKY}}": row["nguoi_ky"],
-            "{{NOIDEN_BANG}}": row["noi_den"],
-            "{{NGAYDI}}": f"{d1.day:02}",
-            "{{THANGDI}}": f"{d1.month:02}",
-            "{{NAMDI}}": str(d1.year),
-            "{{NGAYVE}}": f"{d2.day:02}",
-            "{{THANGVE}}": f"{d2.month:02}",
-            "{{NAMVE}}": str(d2.year),
-            "{{NGAYKY}}": f"{d3.day:02}",
-            "{{THANGKY}}": f"{d3.month:02}",
-            "{{NAMKY}}": str(d3.year),
-        }
-
-        uid = uuid.uuid4().hex
-        temp_dir = tempfile.gettempdir()
-        docx_path = os.path.join(temp_dir, f"{uid}.docx")
-        pdf_path = os.path.join(temp_dir, f"{uid}.pdf")
-
-        doc = Document("CL2026.docx")
-        replace_advanced(doc, data)
-        doc.save(docx_path)
-
-        convert(docx_path, pdf_path)
-
-        @after_this_request
-        def cleanup(response):
-            try:
-                os.remove(docx_path)
-                os.remove(pdf_path)
-            except:
-                pass
-            pythoncom.CoUninitialize()
-            return response
-
-        return send_file(pdf_path, mimetype="application/pdf")
-
-    except Exception:
-        pythoncom.CoUninitialize()
-        return "Không thể tạo PDF"
-
 
 # ===== API NGƯỜI ĐI CÔNG TÁC =====
 @app.route("/api/nguoidicongtac")
@@ -1354,5 +1133,6 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
 
     app.run(host="0.0.0.0", port=port)
+
 
 
