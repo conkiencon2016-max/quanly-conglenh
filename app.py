@@ -1127,21 +1127,31 @@ def xoa_nguoidicongtac(id):
 
     return redirect("/quanly_nguoidicongtac")
 # ================= backup =================
+# ================= BACKUP DATABASE =================
 def backup_job():
-    subprocess.run(["python", "backup_drive.py"])
+    try:
+        subprocess.run(["python", "backup_drive.py"])
+        print("Backup database thành công")
+    except Exception as e:
+        print("Backup lỗi:", e)
 
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(backup_job, 'cron', hour=2)  # 2h sáng
-    scheduler.start()
 
-# ================= RUN =================
+# ================= SCHEDULER =================
+scheduler = BackgroundScheduler()
 
+# chạy mỗi ngày lúc 02:00 sáng
+scheduler.add_job(backup_job, 'cron', hour=2, minute=0)
+
+scheduler.start()
 
 if __name__ == "__main__":
+
     port = int(os.environ.get("PORT", 10000))
 
-    app.run(host="0.0.0.0", port=port)
+    print("Server đang chạy...")
+    print("Backup database mỗi ngày lúc 02:00")
 
+    app.run(host="0.0.0.0", port=port)
 
 
 
