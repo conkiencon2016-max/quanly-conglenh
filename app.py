@@ -1172,6 +1172,9 @@ def download_backup(filename):
 
     path = os.path.join("backups", filename)
 
+    if not os.path.exists(path):
+        return "File không tồn tại!"
+
     return send_file(path, as_attachment=True)
 # ================= restore_backup =================
 @app.route("/restore_backup/<filename>")
@@ -1182,7 +1185,9 @@ def restore_backup(filename):
 
     backup_file = os.path.join("backups", filename)
 
-    import shutil
+    if not os.path.exists(backup_file):
+        return "File backup không tồn tại!"
+
     shutil.copy(backup_file, DB)
 
     return "Khôi phục database thành công! Hãy reload trang."
@@ -1191,9 +1196,14 @@ def restore_backup(filename):
 @app.route("/backup_manager")
 def backup_manager():
 
+    os.makedirs("backups", exist_ok=True)
+
     files = sorted(os.listdir("backups"), reverse=True)
 
-    return render_template("backup_manager.html", files=files)
+    return render_template(
+        "backup_manager.html",
+        files=files
+    )
 # ================= SCHEDULER =================
 
 scheduler = BackgroundScheduler()
@@ -1205,11 +1215,13 @@ if os.environ.get("RUN_MAIN") != "true":
     scheduler.start()
 
 if __name__ == "__main__":
+
     port = int(os.environ.get("PORT", 10000))
 
-    app.run(host="0.0.0.0", port=port, debug=False)
+    print("Server đang chạy...")
+    print("Backup database mỗi ngày lúc 02:00")
 
-
+    app.run(host="0.0.0.0", port=port)
 
 
 
