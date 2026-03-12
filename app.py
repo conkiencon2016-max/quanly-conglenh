@@ -2,7 +2,8 @@
 from flask import Flask, render_template, request, redirect, session, send_file
 import sqlite3
 from datetime import datetime, timedelta
-
+from apscheduler.schedulers.background import BackgroundScheduler
+import subprocess
 # ===== THÊM NHỮNG IMPORT BỊ THIẾU =====
 import tempfile
 import os
@@ -1125,6 +1126,13 @@ def xoa_nguoidicongtac(id):
     conn.close()
 
     return redirect("/quanly_nguoidicongtac")
+# ================= backup =================
+def backup_job():
+    subprocess.run(["python", "backup_drive.py"])
+
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(backup_job, 'cron', hour=2)  # 2h sáng
+    scheduler.start()
 
 # ================= RUN =================
 
@@ -1133,6 +1141,7 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
 
     app.run(host="0.0.0.0", port=port)
+
 
 
 
