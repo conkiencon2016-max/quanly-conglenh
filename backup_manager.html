@@ -1,0 +1,32 @@
+<h2>Quản lý Backup Database</h2>
+
+<table border="1" cellpadding="8">
+
+<tr>
+<th>File backup</th>
+<th>Tải</th>
+<th>Khôi phục</th>
+</tr>
+
+{% for f in files %}
+
+<tr>
+
+<td>{{f}}</td>
+
+<td>
+<a href="/download_backup/{{f}}">Download</a>
+</td>
+
+<td>
+<a href="/restore_backup/{{f}}" 
+onclick="return confirm('Khôi phục database này?')">
+Restore
+</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
