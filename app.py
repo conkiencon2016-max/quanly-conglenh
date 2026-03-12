@@ -193,8 +193,8 @@ def nhap():
         row = c.execute("""
             SELECT COALESCE(MAX(so_thu_tu), 0)
             FROM conglenh
-            WHERE nam=? AND so_thu_tu=?
-        """, (current_year, so_thu_tu)).fetchone()
+            WHERE nam=?
+        """, (current_year,)).fetchone()
 
         return row[0] + 1
 
@@ -1130,7 +1130,7 @@ def xoa_nguoidicongtac(id):
 # ================= BACKUP DATABASE =================
 def backup_job():
     try:
-        subprocess.run(["python", "backup_drive.py"])
+        subprocess.run(["python3", "backup_drive.py"])
         print("Backup database thành công")
     except Exception as e:
         print("Backup lỗi:", e)
@@ -1142,7 +1142,8 @@ scheduler = BackgroundScheduler()
 # chạy mỗi ngày lúc 02:00 sáng
 scheduler.add_job(backup_job, 'cron', hour=2, minute=0)
 
-scheduler.start()
+if os.environ.get("RUN_MAIN") != "true":
+    scheduler.start()
 
 if __name__ == "__main__":
 
@@ -1152,6 +1153,7 @@ if __name__ == "__main__":
     print("Backup database mỗi ngày lúc 02:00")
 
     app.run(host="0.0.0.0", port=port)
+
 
 
 
