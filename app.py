@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 import subprocess
 # ===== THÊM NHỮNG IMPORT BỊ THIẾU =====
+import shutil
 import tempfile
 import os
 import uuid
@@ -1136,9 +1137,67 @@ def backup_job():
         print("Backup lỗi:", e)
 
 
-# ================= SCHEDULER =================
-scheduler = BackgroundScheduler()
+# ================= AUTO BACKUP DATABASE =================
+def auto_backup():
 
+    try:
+
+        os.makedirs("backups", exist_ok=True)
+
+        today = datetime.now().strftime("%Y%m%d")
+
+        backup_file = f"backups/conglenh_{today}.db"
+
+        shutil.copy(DB, backup_file)
+
+        print("Backup OK:", backup_file)
+
+        # giữ 30 file gần nhất
+        files = sorted(os.listdir("backups"))
+
+        if len(files) > 30:
+
+            for f in files[:-30]:
+                os.remove(os.path.join("backups", f))
+
+    except Exception as e:
+
+        print("Backup error:", e)
+# ================= download_backup =================
+@app.route("/download_backup/<filename>")
+def download_backup(filename):
+
+    if session.get("role") != "admin":
+        return "Không có quyền!"
+
+    path = os.path.join("backups", filename)
+
+    return send_file(path, as_attachment=True)
+# ================= restore_backup =================
+@app.route("/restore_backup/<filename>")
+def restore_backup(filename):
+
+    if session.get("role") != "admin":
+        return "Không có quyền!"
+
+    backup_file = os.path.join("backups", filename)
+
+    import shutil
+    shutil.copy(backup_file, DB)
+
+    return "Khôi phục database thành công! Hãy reload trang."
+# ================= backup_manager =================
+
+@app.route("/backup_manager")
+def backup_manager():
+
+    files = sorted(os.listdir("backups"), reverse=True)
+
+    return render_template("backup_manager.html", files=files)
+# ================= SCHEDULER =================
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(auto_backup, 'cron', hour=2)
 # chạy mỗi ngày lúc 02:00 sáng
 scheduler.add_job(backup_job, 'cron', hour=2, minute=0)
 
@@ -1153,6 +1212,7 @@ if __name__ == "__main__":
     print("Backup database mỗi ngày lúc 02:00")
 
     app.run(host="0.0.0.0", port=port)
+
 
 
 
