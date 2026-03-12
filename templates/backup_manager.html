@@ -1,32 +1,161 @@
-<h2>Quản lý Backup Database</h2>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Quản lý Backup Database</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<table border="1" cellpadding="8">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
+<style>
+
+body{
+    font-family:Segoe UI,Arial;
+    margin:0;
+    background:url("/static/tru_so.jpg") center/cover fixed;
+}
+
+.overlay{
+    min-height:100vh;
+    background:rgba(255,255,255,0.85);
+    padding:30px;
+}
+
+header{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+header h1{
+    color:#B11226;
+    font-weight:700;
+}
+
+.card-box{
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.15);
+}
+
+.table th{
+    background:#0F3D5E;
+    color:white;
+}
+
+.btn-download{
+    background:#2563EB;
+    color:white;
+}
+
+.btn-restore{
+    background:#059669;
+    color:white;
+}
+
+.btn-back{
+    background:#6B7280;
+    color:white;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="overlay">
+
+<header>
+<h2>VĂN PHÒNG TỈNH ỦY CÀ MAU</h2>
+<h1>QUẢN LÝ BACKUP DATABASE</h1>
+</header>
+
+<div class="container">
+
+<div class="card-box">
+
+<div class="d-flex justify-content-between mb-3">
+
+<a href="/" class="btn btn-back">
+<i class="bi bi-arrow-left"></i> Quay lại trang chủ
+</a>
+
+</div>
+
+<table class="table table-bordered table-hover">
+
+<thead>
 <tr>
-<th>File backup</th>
-<th>Tải</th>
-<th>Khôi phục</th>
+<th>File Backup</th>
+<th width="120">Tải</th>
+<th width="120">Khôi phục</th>
 </tr>
+</thead>
+
+<tbody>
+
+{% if files %}
 
 {% for f in files %}
 
 <tr>
 
-<td>{{f}}</td>
-
 <td>
-<a href="/download_backup/{{f}}">Download</a>
+<i class="bi bi-database"></i>
+{{f}}
 </td>
 
 <td>
-<a href="/restore_backup/{{f}}" 
-onclick="return confirm('Khôi phục database này?')">
-Restore
+
+<a href="/download_backup/{{f}}"
+class="btn btn-download btn-sm">
+
+<i class="bi bi-download"></i>
+Download
+
 </a>
+
+</td>
+
+<td>
+
+<a href="/restore_backup/{{f}}"
+
+class="btn btn-restore btn-sm"
+
+onclick="return confirm('Bạn chắc chắn muốn khôi phục database này?')">
+
+<i class="bi bi-arrow-clockwise"></i>
+Restore
+
+</a>
+
 </td>
 
 </tr>
 
 {% endfor %}
 
+{% else %}
+
+<tr>
+<td colspan="3" class="text-center text-muted">
+Chưa có file backup
+</td>
+</tr>
+
+{% endif %}
+
+</tbody>
+
 </table>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
