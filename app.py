@@ -192,8 +192,8 @@ def nhap():
         row = c.execute("""
             SELECT COALESCE(MAX(so_thu_tu), 0)
             FROM conglenh
-            WHERE nam=?
-        """, (current_year,)).fetchone()
+            WHERE nam=? AND so_thu_tu=?
+        """, (current_year, so_thu_tu)).fetchone()
 
         return row[0] + 1
 
@@ -240,7 +240,7 @@ def nhap():
     # ======================= SAVE ==========================
     # ======================================================
     if action == "save":
-
+        conn.execute("BEGIN IMMEDIATE")
         existing = c.execute("""
             SELECT id FROM conglenh
             WHERE nam=? AND so_thu_tu=?
@@ -1133,6 +1133,7 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
 
     app.run(host="0.0.0.0", port=port)
+
 
 
 
