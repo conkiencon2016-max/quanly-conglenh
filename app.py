@@ -1204,6 +1204,18 @@ def backup_manager():
         "backup_manager.html",
         files=files
     )
+    # ================= backup_now =================
+
+@app.route("/backup_now")
+def backup_now():
+
+    if session.get("role") != "admin":
+        return "Không có quyền!"
+
+    auto_backup()
+
+    return redirect("/backup_manager")
+
 # ================= SCHEDULER =================
 
 scheduler = BackgroundScheduler()
@@ -1222,6 +1234,7 @@ if __name__ == "__main__":
     print("Backup database mỗi ngày lúc 02:00")
 
     app.run(host="0.0.0.0", port=port)
+
 
 
 
