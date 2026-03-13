@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request, redirect, session, send_file
 import sqlite3
 from datetime import datetime, timedelta
@@ -1234,6 +1233,7 @@ if __name__ == "__main__":
     print("Backup database mỗi ngày lúc 02:00")
 
     app.run(host="0.0.0.0", port=port)
+
 
 
 
