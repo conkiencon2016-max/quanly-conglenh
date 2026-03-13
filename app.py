@@ -1219,7 +1219,7 @@ def backup_now():
 # ================= SCHEDULER =================
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(auto_backup, 'cron', hour=2)
+scheduler.add_job(auto_backup, 'cron', hour=11, minute=0)
 # chạy mỗi ngày lúc 02:00 sáng
 scheduler.add_job(backup_job, 'cron', hour=2, minute=0)
 
@@ -1234,6 +1234,7 @@ if __name__ == "__main__":
     print("Backup database mỗi ngày lúc 02:00")
 
     app.run(host="0.0.0.0", port=port)
+
 
 
 
