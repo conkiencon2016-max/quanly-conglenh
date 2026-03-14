@@ -1214,6 +1214,13 @@ def backup_now():
     auto_backup()
 
     return redirect("/backup_manager")
+# =========================
+# chống ngủ server
+# =========================
+
+@app.route("/ping")
+def ping():
+    return "OK"
 
 # ================= SCHEDULER =================
 
