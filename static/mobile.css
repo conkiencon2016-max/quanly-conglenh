@@ -1,0 +1,35 @@
+/* mobile responsive */
+
+@media (max-width:768px){
+
+.sidebar{
+    width:100%;
+    height:auto;
+    position:relative;
+}
+
+.content{
+    margin-left:0;
+}
+
+.topbar{
+    margin-left:0;
+}
+
+.menu{
+    grid-template-columns:1fr;
+}
+
+header h1{
+    font-size:22px;
+}
+
+header h2{
+    font-size:20px;
+}
+
+.card{
+    padding:16px;
+}
+
+}
