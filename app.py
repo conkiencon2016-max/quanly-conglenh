@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, redirect, session, send_file
 import sqlite3
 from datetime import datetime, timedelta
@@ -1130,11 +1131,10 @@ def xoa_nguoidicongtac(id):
 # ================= BACKUP DATABASE =================
 def backup_job():
     try:
-        subprocess.run(["python3", "backup_drive.py"])
-        print("Backup database thành công")
+        subprocess.run(["python", "backup_drive.py"], check=True)
+        print("Backup Google Drive OK")
     except Exception as e:
-        print("Backup lỗi:", e)
-
+        print("Backup Google Drive lỗi:", e)
 
 # ================= AUTO BACKUP DATABASE =================
 def auto_backup():
@@ -1203,7 +1203,7 @@ def backup_manager():
         "backup_manager.html",
         files=files
     )
-    # ================= backup_now =================
+# ================= backup_now =================
 
 @app.route("/backup_now")
 def backup_now():
@@ -1214,18 +1214,10 @@ def backup_now():
     auto_backup()
 
     return redirect("/backup_manager")
-# =========================
-# chống ngủ server
-# =========================
-
-@app.route("/ping")
-def ping():
-    return "OK"
-
 # ================= SCHEDULER =================
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(auto_backup, 'cron', hour=11, minute=0)
+scheduler.add_job(auto_backup, 'cron', hour=2)
 # chạy mỗi ngày lúc 02:00 sáng
 scheduler.add_job(backup_job, 'cron', hour=2, minute=0)
 
@@ -1240,9 +1232,6 @@ if __name__ == "__main__":
     print("Backup database mỗi ngày lúc 02:00")
 
     app.run(host="0.0.0.0", port=port)
-
-
-
 
 
 
