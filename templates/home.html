@@ -182,7 +182,7 @@ footer {
     </div>
 {% endif %}
 
-    {% if session.get("role") == "admin", "user" %}
+    {% if session.get("role") in ["admin","user"] %}
 <div class="card">
     <h2>👤Quản lý cán bộ</h2>
     <a href="/quanly_nguoidicongtac" class="btn-canbo">Vào chức năng</a>
