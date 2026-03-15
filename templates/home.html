@@ -140,9 +140,13 @@ footer {
                 </a>
             </li>
   <li>
+{% if session.get("role") == "admin" %}
+<li>
 <a class="dropdown-item" href="/quanly_user">
 <i class="bi bi-people"></i> Quản lý người dùng
 </a>
+</li>
+{% endif %}
 </li>
             <li><hr class="dropdown-divider"></li>
             <li>
@@ -164,17 +168,21 @@ footer {
 
 <section class="menu">
 
-    <div class="card">
-        <h2>🚗Nhập Công lệnh</h2>
-        <a href="/nhap" class="btn-dieuxe">Vào chức năng</a>
-    </div>
+    {% if session.get("role") in ["admin","user","viewer"] %}
+<div class="card">
+    <h2>🚗Nhập Công lệnh</h2>
+    <a href="/nhap" class="btn-dieuxe">Vào chức năng</a>
+</div>
+{% endif %}
 
-    <div class="card">
-        <h2>🗂️Quản lý Công lệnh</h2>
-        <a href="/danhsach" class="btn-quanly">Vào chức năng</a>
-    </div>
+    {% if session.get("role") in ["admin","user","viewer"] %}
+<div class="card">
+    <h2>🚗Nhập Công lệnh</h2>
+    <a href="/nhap" class="btn-dieuxe">Vào chức năng</a>
+</div>
+{% endif %}
 
-    {% if session.get("role") == "admin" %}
+    {% if session.get("role") == "admin", "user" %}
 <div class="card">
     <h2>👤Quản lý cán bộ</h2>
     <a href="/quanly_nguoidicongtac" class="btn-canbo">Vào chức năng</a>
@@ -185,12 +193,14 @@ footer {
         <h2>📊Thống kê</h2>
         <a href="/thongke" class="btn-thongke">Vào chức năng</a>
     </div>
-     <div class="card">
-        <h2>🗂️Backup</h2>
-        <a href="/backup_manager" class="btn btn-warning">
+     {% if session.get("role") == "admin" %}
+<div class="card">
+<h2>🗂️Backup</h2>
+<a href="/backup_manager" class="btn btn-warning">
 Quản lý Backup Database
 </a>
-    </div>
+</div>
+{% endif %}
 
 </section>
 

@@ -77,19 +77,19 @@ body{ background:#f4f6f9; }
 
     <a href="/danhsach"
        class="{% if request.path == '/danhsach' %}active-menu{% endif %}
-       {% if session.get('role') != 'admin' %} disabled-link{% endif %}"
-       {% if session.get('role') != 'admin' %}
+       {% if session.get('role') != 'admin', 'user' %} disabled-link{% endif %}"
+       {% if session.get('role') != 'admin', 'user' %}
        data-bs-toggle="tooltip" title="Bạn không có quyền"
        {% endif %}>
        Quản lý công lệnh
-       {% if session.get('role') != 'admin' %}
+       {% if session.get('role') != 'admin', 'user' %}
        <i class="bi bi-lock-fill lock-icon"></i>
        {% endif %}
     </a>
     <a href="/quanly_nguoidicongtac"
        class="{% if request.path == '/quanly_nguoidicongtac' %}active-menu{% endif %}
-       {% if session.get('role') != 'admin' %} disabled-link{% endif %}"
-       {% if session.get('role') != 'admin' %}
+       {% if session.get('role') != 'admin', 'user' %} disabled-link{% endif %}"
+       {% if session.get('role') != 'admin', 'user' %}
        data-bs-toggle="tooltip" title="Bạn không có quyền"
        {% endif %}>
        Quản lý cán bộ
@@ -121,6 +121,15 @@ body{ background:#f4f6f9; }
                     <i class="bi bi-key"></i> Đổi mật khẩu
                 </a>
             </li>
+            <li>
+                <li>
+                <a class="dropdown-item" href="/change_password">
+                    <i class="bi bi-key"></i> Đổi mật khẩu
+                </a>
+            </li>
+
+            </li>
+
             <li><hr class="dropdown-divider"></li>
             <li>
                 <a class="dropdown-item text-danger"
