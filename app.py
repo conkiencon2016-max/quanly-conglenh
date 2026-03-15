@@ -2635,7 +2635,9 @@ def backup_now():
     auto_backup()
 
     return redirect("/backup_manager")
-    # ================= backup_3 lớp =================
+
+
+# ================= backup_3 lớp=================
 @app.route("/backup_full")
 def backup_full():
 
@@ -2671,10 +2673,6 @@ if __name__ == "__main__":
     print("Backup database mỗi ngày lúc 02:00")
 
     app.run(host="0.0.0.0", port=port)
-
-
-
-
 
 
 
