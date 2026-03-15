@@ -93,7 +93,7 @@ body{ background:#f4f6f9; }
        data-bs-toggle="tooltip" title="Bạn không có quyền"
        {% endif %}>
        Quản lý cán bộ
-       {% if session.get('role') != 'admin' %}
+       {% if session.get('role') != 'admin', 'user' %}
        <i class="bi bi-lock-fill lock-icon"></i>
        {% endif %}
     </a>
