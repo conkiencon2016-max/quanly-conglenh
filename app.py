@@ -341,7 +341,7 @@ def danhsach():
     if not login_required():
         return redirect("/login")
 
-    if not check_role(["admin"]):
+    if not check_role(["admin", "user"]):
         return "Không có quyền!"
 
     so = request.args.get("so", "").strip()
@@ -1018,7 +1018,7 @@ def quanly_nguoidicongtac():
     if not login_required():
         return redirect("/login")
 
-    if not check_role(["admin"]):
+    if not check_role(["admin", "user"]):
         return "Không có quyền!"
 
     conn = sqlite3.connect(DB)
@@ -1041,7 +1041,7 @@ def quanly_nguoidicongtac():
 @app.route("/them_nguoidicongtac", methods=["POST"])
 def them_nguoidicongtac():
 
-    if not check_role(["admin"]):
+    if not check_role(["admin", "user"]):
         return "Không có quyền!"
 
     ho_ten = request.form["ho_ten"]
@@ -1069,7 +1069,7 @@ def sua_nguoidicongtac(id):
     if not login_required():
         return redirect("/login")
 
-    if not check_role(["admin"]):
+    if not check_role(["admin", "user"]):
         return "Không có quyền!"
 
     conn = sqlite3.connect(DB)
@@ -1116,7 +1116,7 @@ def sua_nguoidicongtac(id):
 @app.route("/xoa_nguoidicongtac/<int:id>")
 def xoa_nguoidicongtac(id):
 
-    if not check_role(["admin"]):
+    if not check_role(["admin", "user"]):
         return "Không có quyền!"
 
     conn = sqlite3.connect(DB)
@@ -1311,48 +1311,6 @@ def backup_now():
 
     return redirect("/backup_manager")
 # ================= SCHEDULER =================
-
-
-from flask import Flask, render_template, request, redirect, session, send_file
-import sqlite3
-from datetime import datetime, timedelta
-from apscheduler.schedulers.background import BackgroundScheduler
-import subprocess
-# ===== THÊM NHỮNG IMPORT BỊ THIẾU =====
-import shutil
-import tempfile
-import os
-import uuid
-import pandas as pd
-from docx import Document
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib import colors
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib.units import inch
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
-from reportlab.lib import pagesizes
-from reportlab.platypus import Image
-from flask import jsonify
-
-from flask import send_file
-from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment, Border, Side
-from openpyxl.utils import get_column_letter
-from io import BytesIO
-from flask import after_this_request
-from openpyxl.styles import PatternFill
-from io import BytesIO
-
-
-app = Flask(__name__)
-
-app.secret_key = "conglenh_secret_key"
-
-# ⏳ Auto logout 30 phút
-app.permanent_session_lifetime = timedelta(minutes=30)
-
-DB = "conglenh.db"
 
 # ================= DATABASE =================
 def init_db():
@@ -1655,7 +1613,7 @@ def danhsach():
     if not login_required():
         return redirect("/login")
 
-    if not check_role(["admin"]):
+    if not check_role(["admin", "user"]):
         return "Không có quyền!"
 
     so = request.args.get("so", "").strip()
@@ -2332,7 +2290,7 @@ def quanly_nguoidicongtac():
     if not login_required():
         return redirect("/login")
 
-    if not check_role(["admin"]):
+    if not check_role(["admin", "user"]):
         return "Không có quyền!"
 
     conn = sqlite3.connect(DB)
@@ -2355,7 +2313,7 @@ def quanly_nguoidicongtac():
 @app.route("/them_nguoidicongtac", methods=["POST"])
 def them_nguoidicongtac():
 
-    if not check_role(["admin"]):
+    if not check_role(["admin", "user"]):
         return "Không có quyền!"
 
     ho_ten = request.form["ho_ten"]
@@ -2383,7 +2341,7 @@ def sua_nguoidicongtac(id):
     if not login_required():
         return redirect("/login")
 
-    if not check_role(["admin"]):
+    if not check_role(["admin", "user"]):
         return "Không có quyền!"
 
     conn = sqlite3.connect(DB)
@@ -2430,7 +2388,7 @@ def sua_nguoidicongtac(id):
 @app.route("/xoa_nguoidicongtac/<int:id>")
 def xoa_nguoidicongtac(id):
 
-    if not check_role(["admin"]):
+    if not check_role(["admin", "user"]):
         return "Không có quyền!"
 
     conn = sqlite3.connect(DB)
