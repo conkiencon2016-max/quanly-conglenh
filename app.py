@@ -2635,6 +2635,18 @@ def backup_now():
     auto_backup()
 
     return redirect("/backup_manager")
+    # ================= backup_3 lớp =================
+@app.route("/backup_full")
+def backup_full():
+
+    if session.get("role") != "admin":
+        return "Không có quyền!"
+
+    auto_backup()
+    backup_job()
+
+    return "Backup local + Google Drive thành công!"
+
 # ================= SCHEDULER =================
 
 scheduler = BackgroundScheduler()
@@ -2664,15 +2676,6 @@ if __name__ == "__main__":
 
 
 
-print("Auto backup scheduler started")
-if __name__ == "__main__":
-
-    port = int(os.environ.get("PORT", 10000))
-
-    print("Server đang chạy...")
-    print("Backup database mỗi ngày lúc 02:00")
-
-    app.run(host="0.0.0.0", port=port)
 
 
 
