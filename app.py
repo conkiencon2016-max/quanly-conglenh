@@ -32,7 +32,7 @@ from io import BytesIO
 
 
 app = Flask(__name__)
-
+app.config["JSON_AS_ASCII"] = False
 app.secret_key = "conglenh_secret_key"
 
 # ⏳ Auto logout 30 phút
