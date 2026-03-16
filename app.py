@@ -180,7 +180,7 @@ def nhap():
     if "user" not in session:
         return redirect("/login")
 
-    if session.get("role") not in ["admin", "user"]:
+    if session.get("role") not in ["admin", "user","viewer"]:
         return "Không có quyền!"
 
     conn = sqlite3.connect(DB, timeout=30)
