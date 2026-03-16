@@ -32,19 +32,7 @@ from io import BytesIO
 
 
 app = Flask(__name__)
-# ===== START SCHEDULER CHO RENDER =====
-scheduler = BackgroundScheduler()
 
-def start_scheduler():
-
-    scheduler.add_job(auto_backup, 'cron', hour=2, minute=0)
-    scheduler.add_job(backup_job, 'cron', hour=2, minute=5)
-
-    if not scheduler.running:
-        scheduler.start()
-        print("Auto backup scheduler started")
-
-start_scheduler()
 app.secret_key = "conglenh_secret_key"
 
 # ⏳ Auto logout 30 phút
@@ -1239,7 +1227,7 @@ def xoa_user(id):
 # ================= BACKUP DATABASE =================
 def backup_job():
     try:
-        subprocess.run(["python", "backup_drive.py"], check=True)
+        subprocess.run(["python3", "backup_drive.py"], check=True)
         print("Backup Google Drive OK")
     except Exception as e:
         print("Backup Google Drive lỗi:", e)
@@ -1277,7 +1265,7 @@ def download_backup(filename):
     if session.get("role") != "admin":
         return "Không có quyền!"
 
-    path = os.path.join("backups", filename)
+    path = os.path.join("/tmp/backups", filename)
 
     if not os.path.exists(path):
         return "File không tồn tại!"
@@ -1303,9 +1291,9 @@ def restore_backup(filename):
 @app.route("/backup_manager")
 def backup_manager():
 
-    os.makedirs("backups", exist_ok=True)
+    os.makedirs("/tmp/backups", exist_ok=True)
 
-    files = sorted(os.listdir("backups"), reverse=True)
+    files = sorted(os.listdir("/tmp/backups"), reverse=True)
 
     return render_template(
         "backup_manager.html",
@@ -1322,7 +1310,19 @@ def backup_now():
     auto_backup()
 
     return redirect("/backup_manager")
+# ===== START SCHEDULER CHO RENDER =====
+scheduler = BackgroundScheduler()
 
+def start_scheduler():
+
+    scheduler.add_job(auto_backup, 'cron', hour=16, minute=0)
+    scheduler.add_job(backup_job, 'cron', hour=16, minute=10)
+
+    if not scheduler.running:
+        scheduler.start()
+        print("Auto backup scheduler started")
+
+start_scheduler()
 
 if __name__ == "__main__":
 
