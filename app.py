@@ -32,7 +32,19 @@ from io import BytesIO
 
 
 app = Flask(__name__)
+# ===== START SCHEDULER CHO RENDER =====
+scheduler = BackgroundScheduler()
 
+def start_scheduler():
+
+    scheduler.add_job(auto_backup, 'cron', hour=2, minute=0)
+    scheduler.add_job(backup_job, 'cron', hour=2, minute=5)
+
+    if not scheduler.running:
+        scheduler.start()
+        print("Auto backup scheduler started")
+
+start_scheduler()
 app.secret_key = "conglenh_secret_key"
 
 # ⏳ Auto logout 30 phút
@@ -1237,23 +1249,23 @@ def auto_backup():
 
     try:
 
-        os.makedirs("backups", exist_ok=True)
+        os.makedirs("/tmp/backups", exist_ok=True)
 
         today = datetime.now().strftime("%Y%m%d")
 
-        backup_file = f"backups/conglenh_{today}.db"
+        backup_file = f"/tmp/backups/conglenh_{today}.db"
 
         shutil.copy(DB, backup_file)
 
         print("Backup OK:", backup_file)
 
         # giữ 30 file gần nhất
-        files = sorted(os.listdir("backups"))
+        files = sorted(os.listdir("/tmp/backups"))
 
         if len(files) > 30:
 
             for f in files[:-30]:
-                os.remove(os.path.join("backups", f))
+                os.remove(os.path.join("/tmp/backups", f))
 
     except Exception as e:
 
@@ -1310,29 +1322,14 @@ def backup_now():
     auto_backup()
 
     return redirect("/backup_manager")
-# ================= SCHEDULER =================
-
-scheduler = BackgroundScheduler()
-
-def start_scheduler():
-    scheduler.add_job(auto_backup, 'cron', hour=2, minute=0)
-    scheduler.add_job(backup_job, 'cron', hour=2, minute=5)
-
-    if not scheduler.running:
-        scheduler.start()
-        print("Auto backup scheduler started")
-print("Auto backup scheduler started")
 
 
 if __name__ == "__main__":
 
-    start_scheduler()
-
     port = int(os.environ.get("PORT", 10000))
 
     print("Server đang chạy...")
-    print("Backup database mỗi ngày lúc 02:00")
-
+   
     app.run(host="0.0.0.0", port=port)
 
 
