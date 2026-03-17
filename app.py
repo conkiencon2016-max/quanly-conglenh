@@ -1221,7 +1221,6 @@ def xoa_user(id):
 
     conn.commit()
     conn.close()
-
     return redirect("/quanly_user")
 # ================= backup =================
 # ================= BACKUP DATABASE =================
