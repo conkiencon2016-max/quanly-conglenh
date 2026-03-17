@@ -209,13 +209,27 @@ input.error{
 
 // Auto focus + auto ngày ký hôm nay
 window.onload = function(){
+
     document.getElementById("ho_ten").focus();
 
+    const today = new Date().toISOString().split("T")[0];
+
+    const ngayDi = document.getElementById("ngay_di");
+    const ngayVe = document.getElementById("ngay_ve");
     const ngayKy = document.getElementById("ngay_ky");
+
+    if(!ngayDi.value){
+        ngayDi.value = today;
+    }
+
+    if(!ngayVe.value){
+        ngayVe.value = today;
+    }
+
     if(!ngayKy.value){
-        const today = new Date().toISOString().split("T")[0];
         ngayKy.value = today;
     }
+
 };
 
 function clearErrors(){
