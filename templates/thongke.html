@@ -4,7 +4,46 @@
 <div class="card p-4 card-dashboard">
 
 <h4 class="mb-3">📊 Thống kê công lệnh</h4>
+<div class="row mb-4">
 
+<div class="col-md-3">
+<div class="card text-center p-3 shadow">
+
+<h6>Tổng công lệnh</h6>
+<h3>{{ data|length }}</h3>
+
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card text-center p-3 shadow">
+
+<h6>Năm</h6>
+
+<select id="yearSelect" class="form-select">
+
+{% for y in range(2024,2035) %}
+
+<option value="{{y}}">{{y}}</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+</div>
+
+<div class="col-md-6">
+
+<div class="card p-3 shadow">
+
+<canvas id="chartCongLenh"></canvas>
+
+</div>
+
+</div>
+
+</div>
 <form method="post" class="row g-3 mb-4" id="formThongKe">
 
     <div class="col-md-3">
@@ -79,3 +118,43 @@ Tổng số công lệnh: {{ data|length }}
 
 
 {% endblock %}
+<div class="row mb-4">
+
+<div class="col-md-3">
+<div class="card text-center p-3 shadow">
+
+<h6>Tổng công lệnh</h6>
+<h3>{{ data|length }}</h3>
+
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card text-center p-3 shadow">
+
+<h6>Năm</h6>
+
+<select id="yearSelect" class="form-select">
+
+{% for y in range(2024,2035) %}
+
+<option value="{{y}}">{{y}}</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+</div>
+
+<div class="col-md-6">
+
+<div class="card p-3 shadow">
+
+<canvas id="chartCongLenh"></canvas>
+
+</div>
+
+</div>
+
+</div>
