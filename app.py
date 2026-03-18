@@ -1258,47 +1258,75 @@ def restore_backup(filename):
         return "File backup không tồn tại!"
 
     shutil.copy(backup_file, DB)
-
     return "Khôi phục database thành công! Hãy reload trang."
     # ================= backup_manager =================
 
 @app.route("/backup_manager")
 def backup_manager():
 
-    os.makedirs("backups", exist_ok=True)
+    BACKUP_DIR="backups"
 
-    files = sorted(os.listdir("backups"), reverse=True)
+    os.makedirs(BACKUP_DIR, exist_ok=True)
 
-    return render_template(
-        "backup_manager.html",
-        files=files
-    )
+    files = sorted(os.listdir(BACKUP_DIR), reverse=True)
+
+    file_data=[]
+
+   for f in files:
+
+       path=os.path.join(BACKUP_DIR,f)
+
+       size=os.path.getsize(path)/(1024*1024)
+
+       file_data.append({
+           "name":f,
+           "size":f"{size:.2f} MB"
+       })
+
+   return render_template(
+       "backup_manager.html",
+       files=file_data
+   )
     # ================= AUTO BACKUP DATABASE =================
 def auto_backup():
 
     try:
 
-        os.makedirs("backups", exist_ok=True)
+        BACKUP_DIR = "backups"
+        os.makedirs(BACKUP_DIR, exist_ok=True)
 
-        today = datetime.now().strftime("%Y%m%d")
+        now = datetime.now()
+        today = now.strftime("%Y%m%d_%H%M%S")
 
-        backup_file = f"backups/conglenh_{today}.db"
+        backup_file = f"{BACKUP_DIR}/conglenh_{today}.db"
 
         shutil.copy(DB, backup_file)
 
-        print("Backup OK:", backup_file)
+        size = os.path.getsize(backup_file) / (1024*1024)
+
+        log = f"[{now}] BACKUP OK: {backup_file} ({size:.2f} MB)"
+
+        with open("backup.log","a") as f:
+            f.write(log+"\n")
+
+        print(log)
 
         # giữ 30 file gần nhất
-        files = sorted(os.listdir("backups"))
+        files = sorted(os.listdir(BACKUP_DIR))
 
         if len(files) > 30:
 
             for f in files[:-30]:
-                os.remove(os.path.join("backups", f))
+                os.remove(os.path.join(BACKUP_DIR, f))
 
     except Exception as e:
 
-        print("Backup error:", e)
+        log = f"[{datetime.now()}] BACKUP ERROR: {e}"
+
+        with open("backup.log","a") as f:
+            f.write(log+"\n")
+
+        print(log)
 
 # ================= backup_now =================
 
