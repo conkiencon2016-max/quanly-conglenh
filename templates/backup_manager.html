@@ -101,6 +101,28 @@ Backup dữ liệu
 {% if files %}
 
 {% for f in files %}
+<tr>
+
+<td>
+<i class="bi bi-database"></i>
+{{f.name}}
+</td>
+
+<td>
+{{f.size}}
+</td>
+
+<td>
+
+<a href="/download_backup/{{f.name}}"
+class="btn btn-download btn-sm">
+
+<i class="bi bi-download"></i>
+Download
+
+</a>
+
+</td>
 
 <tr>
 
