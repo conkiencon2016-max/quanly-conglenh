@@ -750,6 +750,32 @@ def thongke():
         conn.close()
 
     return render_template("thongke.html", data=data)
+
+# ================= THỐNG KÊ NĂM =================
+
+@app.route("/api/thongke_nam/<int:year>")
+def thongke_nam(year):
+
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+
+    data = []
+
+    for m in range(1,13):
+
+        month=f"{year}-{m:02}"
+
+        row=c.execute("""
+        SELECT COUNT(*)
+        FROM conglenh
+        WHERE ngay_di LIKE ?
+        """,(month+"%",)).fetchone()
+
+        data.append(row[0])
+
+    conn.close()
+
+    return jsonify(data)
 # ================= SỬA =================
 @app.route("/sua/<int:id>", methods=["GET","POST"])
 def sua(id):
@@ -1260,35 +1286,41 @@ def restore_backup(filename):
 
     shutil.copy(backup_file, DB)
     return "Khôi phục database thành công! Hãy reload trang."
-    # ================= backup_manager =================
+# ================= backup_manager =================
 
 @app.route("/backup_manager")
 def backup_manager():
 
-    BACKUP_DIR="backups"
+    if session.get("role") != "admin":
+        return "Không có quyền!"
+
+    BACKUP_DIR = "backups"
 
     os.makedirs(BACKUP_DIR, exist_ok=True)
 
     files = sorted(os.listdir(BACKUP_DIR), reverse=True)
 
-    file_data=[]
+    file_data = []
 
-   for f in files:
+    for f in files:
 
-       path=os.path.join(BACKUP_DIR,f)
+        path = os.path.join(BACKUP_DIR, f)
 
-       size=os.path.getsize(path)/(1024*1024)
+        if os.path.isfile(path):
 
-       file_data.append({
-           "name":f,
-           "size":f"{size:.2f} MB"
-       })
+            size = os.path.getsize(path) / (1024 * 1024)
 
-   return render_template(
-       "backup_manager.html",
-       files=file_data
-   )
-    # ================= AUTO BACKUP DATABASE =================
+            file_data.append({
+                "name": f,
+                "size": f"{size:.2f} MB"
+            })
+
+    return render_template(
+        "backup_manager.html",
+        files=file_data
+    )
+
+# ================= AUTO BACKUP DATABASE =================
 def auto_backup():
 
     try:
