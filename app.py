@@ -1264,29 +1264,29 @@ def restore_backup(filename):
 @app.route("/backup_manager")
 def backup_manager():
 
-    BACKUP_DIR="backups"
+    BACKUP_DIR = "backups"
 
     os.makedirs(BACKUP_DIR, exist_ok=True)
 
     files = sorted(os.listdir(BACKUP_DIR), reverse=True)
 
-    file_data=[]
+    file_data = []
 
-   for f in files:
+    for f in files:
 
-       path=os.path.join(BACKUP_DIR,f)
+        path = os.path.join(BACKUP_DIR, f)
 
-       size=os.path.getsize(path)/(1024*1024)
+        size = os.path.getsize(path)/(1024*1024)
 
-       file_data.append({
-           "name":f,
-           "size":f"{size:.2f} MB"
-       })
+        file_data.append({
+            "name": f,
+            "size": f"{size:.2f} MB"
+        })
 
-   return render_template(
-       "backup_manager.html",
-       files=file_data
-   )
+    return render_template(
+        "backup_manager.html",
+        files=file_data
+    )
     # ================= AUTO BACKUP DATABASE =================
 def auto_backup():
 
