@@ -91,6 +91,7 @@ Backup dữ liệu
 <thead>
 <tr>
 <th>File Backup</th>
+<th width="120">Dung lượng</th>
 <th width="120">Tải</th>
 <th width="120">Khôi phục</th>
 </tr>
@@ -105,35 +106,16 @@ Backup dữ liệu
 
 <td>
 <i class="bi bi-database"></i>
-{{f.name}}
+{{ f.name }}
 </td>
 
 <td>
-{{f.size}}
-</td>
-
-<td>
-
-<a href="/download_backup/{{f.name}}"
-class="btn btn-download btn-sm">
-
-<i class="bi bi-download"></i>
-Download
-
-</a>
-
-</td>
-
-<tr>
-
-<td>
-<i class="bi bi-database"></i>
-{{f}}
+{{ f.size }}
 </td>
 
 <td>
 
-<a href="/download_backup/{{f}}"
+<a href="/download_backup/{{ f.name }}"
 class="btn btn-download btn-sm">
 
 <i class="bi bi-download"></i>
@@ -145,10 +127,8 @@ Download
 
 <td>
 
-<a href="/restore_backup/{{f}}"
-
+<a href="/restore_backup/{{ f.name }}"
 class="btn btn-restore btn-sm"
-
 onclick="return confirm('Bạn chắc chắn muốn khôi phục database này?')">
 
 <i class="bi bi-arrow-clockwise"></i>
@@ -159,13 +139,12 @@ Restore
 </td>
 
 </tr>
-
 {% endfor %}
 
 {% else %}
 
 <tr>
-<td colspan="3" class="text-center text-muted">
+<td colspan="4" class="text-center text-muted">
 Chưa có file backup
 </td>
 </tr>
