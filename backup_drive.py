@@ -1,34 +1,49 @@
-import os
-import json
-from datetime import datetime
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
+import os
 
-DB_FILE = "conglenh.db"
+# ===== CONFIG =====
+SCOPES = ['https://www.googleapis.com/auth/drive']
+SERVICE_ACCOUNT_FILE = 'credentials.json'
 
-creds_json = os.environ["GOOGLE_CREDENTIALS_JSON"]
-creds_dict = json.loads(creds_json)
+FOLDER_ID = "PASTE_FOLDER_ID_HERE"
 
-creds = service_account.Credentials.from_service_account_info(
-    creds_dict,
-    scopes=["https://www.googleapis.com/auth/drive.file"]
-)
+# ===== AUTH =====
+creds = service_account.Credentials.from_service_account_file(
+    SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 
-service = build("drive", "v3", credentials=creds)
+service = build('drive', 'v3', credentials=creds)
 
-today = datetime.now().strftime("%Y%m%d_%H%M")
+# ===== UPLOAD FILE =====
+def upload_file(file_path):
 
-file_metadata = {
-"name": f"conglenh_backup_{today}.db"
-}
+    file_name = os.path.basename(file_path)
 
-media = MediaFileUpload(DB_FILE, mimetype="application/octet-stream")
+    file_metadata = {
+        'name': file_name,
+        'parents': [FOLDER_ID]
+    }
 
-file = service.files().create(
-body=file_metadata,
-media_body=media,
-fields="id"
-).execute()
+    media = MediaFileUpload(file_path, resumable=True)
 
-print("Backup Google Drive thành công:", file.get("id"))
+    file = service.files().create(
+        body=file_metadata,
+        media_body=media,
+        fields='id'
+    ).execute()
+
+    print("Uploaded:", file_name)
+
+
+# ===== MAIN =====
+if __name__ == "__main__":
+
+    BACKUP_DIR = "backups"
+
+    for f in os.listdir(BACKUP_DIR):
+
+        path = os.path.join(BACKUP_DIR, f)
+
+        if os.path.isfile(path):
+            upload_file(path)
