@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="card p-4 card-dashboard">
+
+<h4 class="mb-3">✍️ Quản lý người ký</h4>
+
+<form method="post" action="/them_nguoiky" class="row g-3 mb-4">
+
+    <div class="col-md-8">
+        <label>Họ tên</label>
+        <input name="ho_ten" required class="form-control">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end">
+        <button class="btn btn-success w-100">
+            <i class="bi bi-plus-circle"></i> Thêm người ký
+        </button>
+    </div>
+
+</form>
+
+<table class="table table-striped table-hover">
+<thead class="table-dark">
+<tr>
+<th>ID</th>
+<th>Họ tên</th>
+<th>Thao tác</th>
+</tr>
+</thead>
+
+<tbody>
+{% for row in data %}
+<tr>
+<td>{{ row.id }}</td>
+<td>{{ row.ho_ten }}</td>
+<td>
+
+<a href="/sua_nguoiky/{{row.id}}" class="btn btn-warning btn-sm">
+<i class="bi bi-pencil"></i>
+</a>
+
+<a href="/xoa_nguoiky/{{row.id}}"
+   class="btn btn-danger btn-sm"
+   onclick="return confirm('Xóa người ký này?')">
+<i class="bi bi-trash"></i>
+</a>
+
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+
+{% endblock %}

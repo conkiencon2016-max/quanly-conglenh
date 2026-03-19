@@ -188,7 +188,12 @@ footer {
     <a href="/quanly_nguoidicongtac" class="btn-canbo">Vào chức năng</a>
 </div>
 {% endif %}
-
+{% if session.get("role") in ["admin","user"] %}
+<div class="card">
+    <h2>✍️Quản lý người ký</h2>
+    <a href="/quanly_nguoiky" class="btn-canbo">Vào chức năng</a>
+</div>
+{% endif %}
     <div class="card">
         <h2>📊Thống kê</h2>
         <a href="/thongke" class="btn-thongke">Vào chức năng</a>
@@ -210,10 +215,13 @@ Quản lý Backup Database
 </div>
 <div>
 </div>
+<div>
+</div>
 
 
-
-
+<footer>
+    <h2> © PHÒNG CHUYỂN ĐỔI SỐ - CƠ YẾU </h2>
+</footer>
 
 
 <!-- LOGOUT MODAL -->

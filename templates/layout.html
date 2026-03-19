@@ -172,7 +172,16 @@ Quản lý cán bộ
 class="{% if request.path == '/thongke' %}active-menu{% endif %}">
 Thống kê
 </a>
+<a href="/quanly_nguoiky"
+class="{% if request.path == '/quanly_nguoiky' %}active-menu{% endif %}
+{% if session.get('role') not in ['admin','user'] %} disabled-link{% endif %}">
 
+Quản lý người ký
+
+{% if session.get('role') not in ['admin','user'] %}
+<i class="bi bi-lock-fill lock-icon"></i>
+{% endif %}
+</a>
 </div>
 
 <!-- TOPBAR -->
