@@ -72,40 +72,60 @@ header h2 {
 /* ===== MENU CARD ===== */
 .menu {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-    max-width: 1600px;
-    margin: auto;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    max-width: 1400px;
+    margin: 30px auto;
 }
 
+/* CARD CHUẨN DASHBOARD */
 .card {
     background: rgba(255,255,255,0.98);
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+    border-radius: 16px;
+    padding: 28px 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
     text-align: center;
-    transition: 0.2s;
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 180px;
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 26px rgba(0,0,0,0.18);
+    transform: translateY(-6px);
+    box-shadow: 0 18px 35px rgba(0,0,0,0.18);
 }
 
+/* ICON */
+.card-icon {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+/* TITLE */
 .card h2 {
+    font-size: 20px;
+    font-weight: 600;
     color: #0F3D5E;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
+/* BUTTON */
 .card a {
-    display: inline-block;
-    padding: 10px 18px;
+    margin-top: auto;
+    padding: 10px;
     border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
     text-decoration: none;
-    font-weight: 400;
     color: white;
+    transition: 0.2s;
 }
 
+.card a:hover {
+    opacity: 0.9;
+}
 .btn-dieuxe { background: #2563EB; }
 .btn-quanly { background: #059669; }
 .btn-thongke { background: #B45309; }
@@ -162,50 +182,71 @@ footer {
 <div class="overlay">
 
 <header>
-<h2>VĂN PHÒNG TỈNH ỦY CÀ MAU</h2>    
-<h1>ỨNG DỤNG QUẢN LÝ CÔNG LỆNH</h1>
+    <h2 style="font-size:18px;color:#555;letter-spacing:1px;">
+        VĂN PHÒNG TỈNH ỦY CÀ MAU
+    </h2>
+    <h1 style="font-size:32px;">
+        ỨNG DỤNG QUẢN LÝ CÔNG LỆNH
+    </h1>
 </header>
 
 <section class="menu">
 
        {% if session.get("role") in ["admin","user","viewer"] %}
 <div class="card">
-    <h2>🚗Nhập Công lệnh</h2>
+    <div>
+        <div class="card-icon">🚗</div>
+        <h2>Nhập công lệnh</h2>
+    </div>
     <a href="/nhap" class="btn-dieuxe">Vào chức năng</a>
 </div>
 {% endif %}
  {% if session.get("role") in ["admin","user"] %}
 
    <div class="card">
-        <h2>🗂️Quản lý Công lệnh</h2>
-        <a href="/danhsach" class="btn-quanly">Vào chức năng</a>
+    <div>
+        <div class="card-icon">🗂️</div>
+        <h2>Quản lý công lệnh</h2>
     </div>
+    <a href="/danhsach" class="btn-quanly">Vào chức năng</a>
+</div>
 {% endif %}
 
     {% if session.get("role") in ["admin","user"] %}
 <div class="card">
-    <h2>👤Quản lý cán bộ</h2>
+    <div>
+        <div class="card-icon">👤</div>
+        <h2>Quản lý cán bộ</h2>
+    </div>
     <a href="/quanly_nguoidicongtac" class="btn-canbo">Vào chức năng</a>
 </div>
 {% endif %}
 {% if session.get("role") in ["admin","user"] %}
 <div class="card">
-    <h2>✍️Quản lý người ký</h2>
+    <div>
+        <div class="card-icon">✍️</div>
+        <h2>Quản lý người ký</h2>
+    </div>
     <a href="/quanly_nguoiky" class="btn-canbo">Vào chức năng</a>
 </div>
 {% endif %}
     <div class="card">
-        <h2>📊Thống kê</h2>
-        <a href="/thongke" class="btn-thongke">Vào chức năng</a>
+    <div>
+        <div class="card-icon">📊</div>
+        <h2>Thống kê</h2>
     </div>
+    <a href="/thongke" class="btn-thongke">Vào chức năng</a>
+</div>
      {% if session.get("role") == "admin" %}
 <div class="card">
-<h2>🗂️Backup</h2>
-<a href="/backup_manager" class="btn btn-warning">
-Quản lý Backup Database
-</a>
-</div>
-{% endif %}
+    <div>
+        <div class="card-icon">💾</div>
+        <h2>Backup</h2>
+    </div>
+    <a href="/backup_manager" class="btn btn-warning">
+        Quản lý Backup
+    </a>
+</div>{% endif %}
 
 </section>
 
