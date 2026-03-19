@@ -1,5 +1,3 @@
-
-
 from flask import Flask, render_template, request, redirect, session, send_file
 import sqlite3
 from datetime import datetime, timedelta
@@ -1372,6 +1370,33 @@ def backup_now():
     auto_backup()
 
     return redirect("/backup_manager")
+
+# ================= thống kế năm =================
+
+@app.route("/api/thongke_nam/<int:year>")
+def thongke_nam(year):
+
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+
+    data = []
+
+    for m in range(1,13):
+
+        month=f"{year}-{m:02}"
+
+        row=c.execute("""
+        SELECT COUNT(*)
+        FROM conglenh
+        WHERE ngay_di LIKE ?
+        """,(month+"%",)).fetchone()
+
+        data.append(row[0])
+
+    conn.close()
+
+    return jsonify(data)
+
 # =========================
 # chống ngủ server
 # =========================
