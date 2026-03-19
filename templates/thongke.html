@@ -1,9 +1,50 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% extends "layout.html" %}
 {% block content %}
 
 <div class="card p-4 card-dashboard">
 
 <h4 class="mb-3">📊 Thống kê công lệnh</h4>
+<div class="row mb-4">
+
+<div class="col-md-3">
+<div class="card text-center p-3 shadow">
+
+<h6>Tổng công lệnh</h6>
+<h3>{{ data|length }}</h3>
+
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card text-center p-3 shadow">
+
+<h6>Năm</h6>
+
+<select id="yearSelect" class="form-select">
+
+{% for y in range(2024,2035) %}
+
+<option value="{{y}}">{{y}}</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+</div>
+
+<div class="col-md-6">
+
+<div class="card p-3 shadow">
+
+<canvas id="chartCongLenh"></canvas>
+
+</div>
+
+</div>
+
+</div>
 <div class="row mb-4">
 
 <div class="col-md-3">
@@ -158,3 +199,76 @@ Tổng số công lệnh: {{ data|length }}
 </div>
 
 </div>
+<script>
+
+let chart;
+
+function loadChart(year){
+
+fetch("/api/thongke_nam/"+year)
+
+.then(r=>r.json())
+
+.then(data=>{
+
+const ctx=document.getElementById("chartCongLenh");
+
+if(chart){
+chart.destroy();
+}
+
+chart=new Chart(ctx,{
+
+type:'bar',
+
+data:{
+
+labels:[
+"Th1","Th2","Th3","Th4",
+"Th5","Th6","Th7","Th8",
+"Th9","Th10","Th11","Th12"
+],
+
+datasets:[{
+
+label:"Công lệnh",
+
+data:data,
+
+backgroundColor:"#2563EB"
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+legend:{display:false}
+},
+
+scales:{
+y:{
+beginAtZero:true
+}
+}
+
+}
+
+})
+
+})
+
+}
+
+document.getElementById("yearSelect").addEventListener("change",function(){
+
+loadChart(this.value)
+
+})
+
+loadChart(new Date().getFullYear())
+
+</script>
