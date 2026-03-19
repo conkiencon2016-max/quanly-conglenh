@@ -1,129 +1,85 @@
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% extends "layout.html" %}
 {% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="card p-4 card-dashboard">
 
 <h4 class="mb-3">📊 Thống kê công lệnh</h4>
+
 <div class="row mb-4">
 
+<!-- Tổng -->
 <div class="col-md-3">
 <div class="card text-center p-3 shadow">
-
 <h6>Tổng công lệnh</h6>
 <h3>{{ data|length }}</h3>
+</div>
+</div>
+
+<!-- Chọn năm -->
+<div class="col-md-3">
+<div class="card p-3 shadow">
+<h6>Năm</h6>
+<select id="yearSelect" class="form-select">
+{% for y in range(2024,2035) %}
+<option value="{{y}}">{{y}}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- Chart -->
+<div class="col-md-6">
+<div class="card p-3 shadow">
+<canvas id="chartCongLenh"></canvas>
+</div>
+</div>
 
 </div>
+
+<!-- FORM -->
+<form method="post" class="row g-3 mb-4">
+
+<div class="col-md-3">
+<label>Từ ngày</label>
+<input type="date" name="tu_ngay"
+       value="{{ request.form.tu_ngay }}"
+       class="form-control">
 </div>
 
 <div class="col-md-3">
-<div class="card text-center p-3 shadow">
-
-<h6>Năm</h6>
-
-<select id="yearSelect" class="form-select">
-
-{% for y in range(2024,2035) %}
-
-<option value="{{y}}">{{y}}</option>
-
-{% endfor %}
-
-</select>
-
-</div>
-</div>
-
-<div class="col-md-6">
-
-<div class="card p-3 shadow">
-
-<canvas id="chartCongLenh"></canvas>
-
-</div>
-
-</div>
-
+<label>Đến ngày</label>
+<input type="date" name="den_ngay"
+       value="{{ request.form.den_ngay }}"
+       class="form-control">
 </div>
 
 <div class="col-md-3">
-<div class="card text-center p-3 shadow">
+<label>Họ tên</label>
+<input name="ho_ten"
+       value="{{ request.form.ho_ten }}"
+       class="form-control">
+</div>
 
-<h6>Tổng công lệnh</h6>
-<h3>{{ data|length }}</h3>
+<div class="col-md-3 d-flex align-items-end">
+<div class="d-flex gap-2 w-100">
+
+<button type="submit" class="btn btn-primary w-50">
+<i class="bi bi-filter"></i> Lọc
+</button>
+
+<a href="/export_thongke?tu_ngay={{request.form.tu_ngay}}&den_ngay={{request.form.den_ngay}}&ten={{request.form.ho_ten}}"
+   class="btn btn-success w-50">
+   <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+</a>
 
 </div>
 </div>
 
-
-<div class="card text-center p-3 shadow">
-
-<h6>Năm</h6>
-
-<select id="yearSelect" class="form-select">
-
-{% for y in range(2024,2035) %}
-
-<option value="{{y}}">{{y}}</option>
-
-{% endfor %}
-
-</select>
-
-</div>
-</div>
-
-<div class="col-md-6">
-
-<div class="card p-3 shadow">
-
-<canvas id="chartCongLenh"></canvas>
-
-</div>
-
-</div>
-
-</div>
-<form method="post" class="row g-3 mb-4" id="formThongKe">
-
-    <div class="col-md-3">
-        <label>Từ ngày</label>
-        <input type="date" name="tu_ngay"
-               value="{{ request.form.tu_ngay }}"
-               class="form-control">
-    </div>
-
-    <div class="col-md-3">
-        <label>Đến ngày</label>
-        <input type="date" name="den_ngay"
-               value="{{ request.form.den_ngay }}"
-               class="form-control">
-    </div>
-
-    <div class="col-md-3">
-        <label>Họ tên</label>
-        <input name="ho_ten"
-               value="{{ request.form.ho_ten }}"
-               class="form-control">
-    </div>
-
-    <div class="col-md-3 d-flex align-items-end">
-    <div class="d-flex gap-2 w-100">
-
-        <button type="submit" class="btn btn-primary w-50">
-            <i class="bi bi-filter"></i> Lọc
-        </button>
-
-        <a href="/export_thongke?tu_ngay={{request.form.tu_ngay}}&den_ngay={{request.form.den_ngay}}&ten={{request.form.ho_ten}}"
-           class="btn btn-success w-50">
-           <i class="bi bi-file-earmark-excel"></i> Xuất Excel
-        </a>
-
-    </div>
-</div>
 </form>
 
+<!-- TABLE -->
 <table class="table table-bordered">
 <thead class="table-secondary">
 <tr>
@@ -135,6 +91,7 @@
 <th>Người ký</th>
 </tr>
 </thead>
+
 <tbody>
 {% for row in data %}
 <tr>
@@ -157,47 +114,7 @@ Tổng số công lệnh: {{ data|length }}
 
 </div>
 
-
-{% endblock %}
-
-
-<div class="col-md-3">
-<div class="card text-center p-3 shadow">
-
-<h6>Tổng công lệnh</h6>
-<h3>{{ data|length }}</h3>
-
-</div>
-</div>
-
-<div class="card text-center p-3 shadow">
-
-<h6>Năm</h6>
-
-<select id="yearSelect" class="form-select">
-
-{% for y in range(2024,2035) %}
-
-<option value="{{y}}">{{y}}</option>
-
-{% endfor %}
-
-</select>
-
-</div>
-</div>
-
-<div class="col-md-6">
-
-<div class="card p-3 shadow">
-
-<canvas id="chartCongLenh"></canvas>
-
-</div>
-
-</div>
-
-</div>
+<!-- SCRIPT -->
 <script>
 
 let chart;
@@ -205,9 +122,7 @@ let chart;
 function loadChart(year){
 
 fetch("/api/thongke_nam_chart/"+year)
-
 .then(r=>r.json())
-
 .then(data=>{
 
 const ctx=document.getElementById("chartCongLenh");
@@ -221,39 +136,22 @@ chart=new Chart(ctx,{
 type:'bar',
 
 data:{
-
 labels:[
 "Th1","Th2","Th3","Th4",
 "Th5","Th6","Th7","Th8",
 "Th9","Th10","Th11","Th12"
 ],
-
 datasets:[{
-
 label:"Công lệnh",
-
 data:data,
-
 backgroundColor:"#2563EB"
-
 }]
-
 },
 
 options:{
-
 responsive:true,
-
-plugins:{
-legend:{display:false}
-},
-
-scales:{
-y:{
-beginAtZero:true
-}
-}
-
+plugins:{ legend:{display:false}},
+scales:{ y:{ beginAtZero:true }}
 }
 
 })
@@ -262,12 +160,13 @@ beginAtZero:true
 
 }
 
-document.getElementById("yearSelect").addEventListener("change",function(){
-
+document.getElementById("yearSelect")
+.addEventListener("change",function(){
 loadChart(this.value)
-
 })
 
 loadChart(new Date().getFullYear())
 
 </script>
+
+{% endblock %}
