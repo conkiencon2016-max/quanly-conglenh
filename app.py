@@ -1293,12 +1293,12 @@ def backup_manager():
         return "Không có quyền!"
 
     BACKUP_DIR = "backups"
-
     os.makedirs(BACKUP_DIR, exist_ok=True)
 
     files = sorted(os.listdir(BACKUP_DIR), reverse=True)
 
     file_data = []
+    total_size = 0
 
     for f in files:
 
@@ -1306,18 +1306,29 @@ def backup_manager():
 
         if os.path.isfile(path):
 
-            size = os.path.getsize(path) / (1024 * 1024)
+            size = os.path.getsize(path)
+            total_size += size
 
             file_data.append({
                 "name": f,
-                "size": f"{size:.2f} MB"
+                "size": f"{size / (1024*1024):.2f} MB",
+                "raw_size": size
             })
+
+    # ===== FILE MỚI NHẤT =====
+    latest = file_data[0]["name"] if file_data else "Chưa có"
+
+    # ===== STATUS =====
+    status = "OK" if file_data else "NO DATA"
 
     return render_template(
         "backup_manager.html",
-        files=file_data
+        files=file_data,
+        total_files=len(file_data),
+        total_size=f"{total_size/(1024*1024):.2f} MB",
+        latest=latest,
+        status=status
     )
-
 # ================= AUTO BACKUP DATABASE =================
 def auto_backup():
 
