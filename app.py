@@ -1396,7 +1396,97 @@ def thongke_nam_chart(year):
     conn.close()
 
     return jsonify(data)
+# ================= QUẢN LÝ NGƯỜI KÝ =================
 
+@app.route("/quanly_nguoiky")
+def quanly_nguoiky():
+
+    if not login_required():
+        return redirect("/login")
+
+    if not check_role(["admin","user"]):
+        return "Không có quyền!"
+
+    conn = sqlite3.connect(DB)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM nguoiky ORDER BY ho_ten ASC")
+    data = c.fetchall()
+
+    conn.close()
+
+    return render_template("quanly_nguoiky.html", data=data)
+
+
+# ================= THÊM NGƯỜI KÝ =================
+
+@app.route("/them_nguoiky", methods=["POST"])
+def them_nguoiky():
+
+    if not check_role(["admin","user"]):
+        return "Không có quyền!"
+
+    ho_ten = request.form["ho_ten"]
+
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+
+    c.execute("INSERT INTO nguoiky(ho_ten) VALUES (?)", (ho_ten,))
+    conn.commit()
+    conn.close()
+
+    return redirect("/quanly_nguoiky")
+
+
+# ================= SỬA NGƯỜI KÝ =================
+
+@app.route("/sua_nguoiky/<int:id>", methods=["GET","POST"])
+def sua_nguoiky(id):
+
+    if not login_required():
+        return redirect("/login")
+
+    if not check_role(["admin","user"]):
+        return "Không có quyền!"
+
+    conn = sqlite3.connect(DB)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    if request.method == "POST":
+
+        ho_ten = request.form["ho_ten"]
+
+        c.execute("UPDATE nguoiky SET ho_ten=? WHERE id=?", (ho_ten,id))
+        conn.commit()
+        conn.close()
+
+        return redirect("/quanly_nguoiky")
+
+    c.execute("SELECT * FROM nguoiky WHERE id=?", (id,))
+    row = c.fetchone()
+    conn.close()
+
+    return render_template("sua_nguoiky.html", row=row)
+
+
+# ================= XÓA NGƯỜI KÝ =================
+
+@app.route("/xoa_nguoiky/<int:id>")
+def xoa_nguoiky(id):
+
+    if not check_role(["admin","user"]):
+        return "Không có quyền!"
+
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+
+    c.execute("DELETE FROM nguoiky WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+
+    return redirect("/quanly_nguoiky")
 # =========================
 # chống ngủ server
 # =========================
