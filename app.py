@@ -1360,7 +1360,7 @@ def auto_backup():
 
             for f in files[:-30]:
                 os.remove(os.path.join(BACKUP_DIR, f))
-
+        
     except Exception as e:
 
         log = f"[{datetime.now()}] BACKUP ERROR: {e}"
@@ -1369,7 +1369,7 @@ def auto_backup():
             f.write(log+"\n")
 
         print(log)
-
+    subprocess.run(["python3", "backup_drive.py"])
 # ================= backup_now =================
 
 @app.route("/backup_now")
