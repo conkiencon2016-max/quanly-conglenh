@@ -1334,7 +1334,7 @@ def auto_backup():
 
     try:
 
-        BACKUP_DIR = "backups"
+        BACKUP_DIR = os.path.join(os.getcwd(), "backups")
         os.makedirs(BACKUP_DIR, exist_ok=True)
 
         now = datetime.now()
