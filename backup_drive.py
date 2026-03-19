@@ -7,7 +7,7 @@ import os
 SCOPES = ['https://www.googleapis.com/auth/drive']
 SERVICE_ACCOUNT_FILE = 'credentials.json'
 
-FOLDER_ID = "PASTE_FOLDER_ID_HERE"
+FOLDER_ID = "1Jb1APNiFf5A_h8J8S-27K4fcEl4SRLUH?usp=drive_link"
 
 # ===== AUTH =====
 creds = service_account.Credentials.from_service_account_file(
