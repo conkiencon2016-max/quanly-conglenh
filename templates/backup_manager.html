@@ -115,50 +115,27 @@ height:8px;
 <div class="dashboard">
 
 <div class="card-stat text-center">
-
 <i class="bi bi-database"></i>
-<h3>{{ files|length }}</h3>
+<h3>{{ total_files }}</h3>
 <p>Tổng Backup</p>
-
 </div>
 
 <div class="card-stat text-center">
-
 <i class="bi bi-hdd"></i>
-<h3>
-{% set total=0 %}
-{% for f in files %}
-{% set total=total+1 %}
-{% endfor %}
-{{ total }}
-</h3>
-
-<p>Số File</p>
-
+<h3>{{ total_size }}</h3>
+<p>Dung lượng</p>
 </div>
 
 <div class="card-stat text-center">
-
 <i class="bi bi-clock-history"></i>
-
-<h3>
-{% if files %}
-Mới nhất
-{% else %}
--
-{% endif %}
-</h3>
-
-<p>Backup gần nhất</p>
-
+<h6 style="font-size:14px">{{ latest }}</h6>
+<p>File mới nhất</p>
 </div>
 
 <div class="card-stat text-center">
-
 <i class="bi bi-shield-check"></i>
-<h3>OK</h3>
+<h3>{{ status }}</h3>
 <p>Backup Status</p>
-
 </div>
 
 </div>
