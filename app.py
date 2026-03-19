@@ -1374,7 +1374,7 @@ def backup_now():
 # ================= thống kế năm =================
 
 @app.route("/api/thongke_nam_chart/<int:year>")
-def thongke_nam(year):
+def thongke_nam_chart(year):
 
     conn = sqlite3.connect(DB)
     c = conn.cursor()
