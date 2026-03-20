@@ -133,7 +133,7 @@ data-bs-toggle="tooltip" title="Bạn không có quyền"
 >
 Nhập công lệnh
 
-{% if session.get('role') not in ['admin','user'] %}
+{% if session.get('role') not in ['admin','user', 'viewer'] %}
 <i class="bi bi-lock-fill lock-icon"></i>
 {% endif %}
 </a>
