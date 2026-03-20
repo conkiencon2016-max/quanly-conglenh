@@ -140,9 +140,9 @@ Nhập công lệnh
 
 <a href="/danhsach"
 class="{% if request.path == '/danhsach' %}active-menu{% endif %}
-{% if session.get('role') not in ['admin','user'] %} disabled-link{% endif %}"
+{% if session.get('role') not in ['admin','user', 'viewer'] %} disabled-link{% endif %}"
 
-{% if session.get('role') not in ['admin','user'] %}
+{% if session.get('role') not in ['admin','user', 'viewer'] %}
 data-bs-toggle="tooltip" title="Bạn không có quyền"
 {% endif %}
 >
