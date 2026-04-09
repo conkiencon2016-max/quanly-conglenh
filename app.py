@@ -59,6 +59,13 @@ def init_db():
         ho_ten TEXT
     )
     """)
+    # ===== BẢNG NƠI ĐẾN =====
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS noiden(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ten TEXT UNIQUE
+    )
+    """)
    # ===== BẢNG CÔNG LỆNH =====
     c.execute("""
     CREATE TABLE IF NOT EXISTS conglenh(
@@ -1498,6 +1505,122 @@ def xoa_nguoiky(id):
     conn.close()
 
     return redirect("/quanly_nguoiky")
+# ===== API NƠI ĐẾN =====
+@app.route("/api/noiden")
+def api_noiden():
+    conn = sqlite3.connect(DB)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT * FROM noiden ORDER BY ten ASC")
+    data = [dict(row) for row in c.fetchall()]
+    conn.close()
+    return jsonify(data)
+# ================= QUẢN LÝ NƠI ĐẾN =================
+@app.route("/quanly_noiden")
+def quanly_noiden():
+
+    if not login_required():
+        return redirect("/login")
+
+    if not check_role(["admin","user"]):
+        return "Không có quyền!"
+
+    conn = sqlite3.connect(DB)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM noiden ORDER BY ten ASC")
+    data = c.fetchall()
+
+    conn.close()
+
+    return render_template("quanly_noiden.html", data=data)
+
+
+# ===== THÊM =====
+@app.route("/them_noiden", methods=["POST"])
+def them_noiden():
+
+    if not check_role(["admin","user"]):
+        return "Không có quyền!"
+
+    ten = request.form["ten"]
+
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+
+    c.execute("INSERT INTO noiden(ten) VALUES (?)", (ten,))
+    conn.commit()
+    conn.close()
+
+    return redirect("/quanly_noiden")
+
+
+# ===== XÓA =====
+@app.route("/xoa_noiden/<int:id>")
+def xoa_noiden(id):
+
+    if not check_role(["admin","user"]):
+        return "Không có quyền!"
+
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+
+    c.execute("DELETE FROM noiden WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+
+    return redirect("/quanly_noiden")
+
+
+# ===== Sửa nơi đến =====
+
+@app.route("/sua_noiden/<int:id>", methods=["GET","POST"])
+def sua_noiden(id):
+
+    if not login_required():
+        return redirect("/login")
+
+    if not check_role(["admin","user"]):
+        return "Không có quyền!"
+
+    conn = sqlite3.connect(DB)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    if request.method == "POST":
+
+        ten = request.form["ten"].strip()
+
+        # chống trùng
+        c.execute("""
+            SELECT id FROM noiden
+            WHERE ten=? AND id!=?
+        """, (ten, id))
+
+        if c.fetchone():
+            conn.close()
+            return "Nơi đến đã tồn tại!"
+
+        c.execute("""
+            UPDATE noiden
+            SET ten=?
+            WHERE id=?
+        """, (ten, id))
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/quanly_noiden")
+
+    c.execute("SELECT * FROM noiden WHERE id=?", (id,))
+    row = c.fetchone()
+    conn.close()
+
+    if not row:
+        return "Không tìm thấy!"
+
+    return render_template("sua_noiden.html", row=row)
 # =========================
 # chống ngủ server
 # =========================
