@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="card p-4 card-dashboard">
+
+<h4 class="mb-3">📍 Quản lý nơi đến</h4>
+
+<form method="post" action="/them_noiden" class="row g-3 mb-4">
+
+    <div class="col-md-8">
+        <label>Tên nơi đến</label>
+        <input name="ten" required class="form-control">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end">
+        <button class="btn btn-success w-100">
+            <i class="bi bi-plus-circle"></i> Thêm nơi đến
+        </button>
+    </div>
+
+</form>
+
+<table class="table table-striped table-hover">
+<thead class="table-dark">
+<tr>
+<th>ID</th>
+<th>Tên nơi đến</th>
+<th>Thao tác</th>
+</tr>
+</thead>
+
+<tbody>
+{% for row in data %}
+<tr>
+<td>{{ row.id }}</td>
+<td>{{ row.ten }}</td>
+<td>
+
+<a href="/sua_noiden/{{row.id}}" class="btn btn-warning btn-sm">
+<i class="bi bi-pencil"></i>
+</a>
+
+<a href="/xoa_noiden/{{row.id}}"
+   class="btn btn-danger btn-sm"
+   onclick="return confirm('Xóa nơi đến này?')">
+<i class="bi bi-trash"></i>
+</a>
+
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+
+{% endblock %}

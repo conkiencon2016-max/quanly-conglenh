@@ -156,8 +156,14 @@ input.error{
 
 <div class="form-group">
 <label>Nơi đến *</label>
+
+<div style="display:flex; gap:6px;">
 <input name="noi_den" id="noi_den"
-       value="{{ form_data.noi_den if form_data }}">
+       value="{{ form_data.noi_den if form_data }}"
+       readonly style="flex:1;">
+<button type="button" onclick="openNoiDen()">Chọn</button>
+</div>
+
 <div class="error-text" id="err_noi_den"></div>
 </div>
 
@@ -343,6 +349,30 @@ function printWord(){
         a.download = "conglenh.docx";
         a.click();
     });
+}
+
+function openNoiDen(){
+
+    document.getElementById("popup").style.display="block";
+
+    fetch("/api/noiden?ts=" + new Date().getTime())
+    .then(res=>res.json())
+    .then(data=>{
+        let html="";
+        data.forEach(nd=>{
+            html+=`
+            <div onclick="chonNoiDen('${nd.ten}')"
+                 style="padding:6px; cursor:pointer; border-bottom:1px solid #ddd;">
+                ${nd.ten}
+            </div>`;
+        });
+        document.getElementById("dsCanBo").innerHTML=html;
+    });
+}
+
+function chonNoiDen(ten){
+    document.getElementById("noi_den").value = ten;
+    closePopup();
 }
 </script>
 <script>

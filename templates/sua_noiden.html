@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="card shadow-lg p-4">
+
+<h4 class="mb-3">📍 Sửa nơi đến</h4>
+
+<form method="post">
+
+<div class="mb-3">
+<label>Tên nơi đến</label>
+<input name="ten" value="{{ row.ten }}" class="form-control" required>
+</div>
+
+<button class="btn btn-warning">
+<i class="bi bi-save"></i> Lưu
+</button>
+
+<a href="/quanly_noiden" class="btn btn-secondary">Quay lại</a>
+
+</form>
+
+</div>
+
+{% endblock %}
