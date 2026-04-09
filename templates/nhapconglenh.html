@@ -354,6 +354,7 @@ function printWord(){
 function openNoiDen(){
 
     document.getElementById("popup").style.display="block";
+    document.getElementById("popupTitle").innerText = "Chọn nơi đến";
 
     fetch("/api/noiden?ts=" + new Date().getTime())
     .then(res=>res.json())
@@ -369,7 +370,6 @@ function openNoiDen(){
         document.getElementById("dsCanBo").innerHTML=html;
     });
 }
-
 function chonNoiDen(ten){
     document.getElementById("noi_den").value = ten;
     closePopup();
@@ -397,6 +397,7 @@ document.addEventListener("input", function(e){
 function openNguoiDi(){
 
     document.getElementById("popup").style.display="block";
+    document.getElementById("popupTitle").innerText = "Chọn cán bộ";
 
     fetch("/api/nguoidicongtac?ts=" + new Date().getTime())
     .then(res=>res.json())
@@ -413,7 +414,6 @@ function openNguoiDi(){
         document.getElementById("dsCanBo").innerHTML=html;
     });
 }
-
 function chonNguoiDi(ten,chucvu){
     document.getElementById("ho_ten").value = ten;
     document.getElementById("chuc_vu").value = chucvu;
@@ -422,7 +422,9 @@ function chonNguoiDi(ten,chucvu){
 
 
 function openNguoiKy(){
+
     document.getElementById("popup").style.display="block";
+    document.getElementById("popupTitle").innerText = "Chọn người ký";
 
     fetch("/api/nguoiky")
     .then(res=>res.json())
@@ -438,7 +440,6 @@ function openNguoiKy(){
         document.getElementById("dsCanBo").innerHTML=html;
     });
 }
-
 function chonNguoiKy(ten){
     document.getElementById("nguoi_ky").value = ten;
     closePopup();
@@ -468,7 +469,7 @@ max-height:500px;
 overflow:auto;
 ">
 
-<h4>Chọn cán bộ</h4>
+<h4 id="popupTitle">Chọn</h4>
 
 <input type="text" id="searchBox"
        placeholder="Tìm kiếm..."
