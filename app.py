@@ -1623,7 +1623,7 @@ def sua_noiden(id):
     return render_template("sua_noiden.html", row=row)
 
 # ===== import excel =====
-import unicodedata
+
 def normalize(text):
     if not text:
         return ""
@@ -1664,10 +1664,6 @@ def import_excel():
         file = request.files.get("file")
         if not file:
             return "Chưa chọn file!"
-
-        import pandas as pd
-        import sqlite3
-        from datetime import datetime
 
         df = pd.read_excel(file)
 
