@@ -212,7 +212,7 @@ footer {
 </div>
 {% endif %}
 
-    {% if session.get("role") in ["admin","user"] %}
+    {% if session.get("role") in ["admin"] %}
 <div class="card">
     <div>
         <div class="card-icon">👤</div>
@@ -221,7 +221,7 @@ footer {
     <a href="/quanly_nguoidicongtac" class="btn-canbo">Vào chức năng</a>
 </div>
 {% endif %}
-{% if session.get("role") in ["admin","user"] %}
+{% if session.get("role") in ["admin"] %}
 <div class="card">
     <div>
         <div class="card-icon">✍️</div>
