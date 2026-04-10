@@ -254,6 +254,17 @@ footer {
         Quản lý Backup
     </a>
 </div>{% endif %}
+    {% if session.get("role") == "admin" %}
+<div class="card">
+    <div>
+        <div class="card-icon">📥</div>
+        <h2>Import Excel</h2>
+    </div>
+    <a href="/import_excel" class="btn btn-primary">
+        Import dữ liệu
+    </a>
+</div>
+{% endif %}
 
 </section>
 
