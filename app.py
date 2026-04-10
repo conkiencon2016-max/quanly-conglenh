@@ -1621,6 +1621,76 @@ def sua_noiden(id):
         return "Không tìm thấy!"
 
     return render_template("sua_noiden.html", row=row)
+
+# ===== import excel =====
+@app.route("/import_excel", methods=["GET","POST"])
+def import_excel():
+
+    if session.get("role") != "admin":
+        return "Không có quyền!"
+
+    if request.method == "POST":
+
+        file = request.files.get("file")
+
+        if not file:
+            return "Chưa chọn file!"
+
+        import pandas as pd
+        import sqlite3
+        from datetime import datetime
+
+        df = pd.read_excel(file)
+
+        conn = sqlite3.connect(DB)
+        c = conn.cursor()
+
+        current_year = datetime.now().year
+
+        for index, row in df.iterrows():
+            try:
+                ho_ten = str(row["ho_ten"]).strip()
+                chuc_vu = str(row["chuc_vu"]).strip()
+                noi_den = str(row["noi_den"]).strip()
+                nguoi_ky = str(row["nguoi_ky"]).strip()
+
+                ngay_di = pd.to_datetime(row["ngay_di"]).strftime("%Y-%m-%d")
+                ngay_ve = pd.to_datetime(row["ngay_ve"]).strftime("%Y-%m-%d")
+                ngay_ky = pd.to_datetime(row["ngay_ky"]).strftime("%Y-%m-%d")
+
+                so_thu_tu = index + 1
+                so_cong_lenh = f"{so_thu_tu:02}/{current_year}"
+
+                c.execute("""
+                INSERT INTO conglenh(
+                    nam, so_thu_tu, so_cong_lenh,
+                    ho_ten, chuc_vu, noi_den,
+                    ngay_di, ngay_ve, ngay_ky,
+                    nguoi_ky, created_at
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                """, (
+                    current_year,
+                    so_thu_tu,
+                    so_cong_lenh,
+                    ho_ten,
+                    chuc_vu,
+                    noi_den,
+                    ngay_di,
+                    ngay_ve,
+                    ngay_ky,
+                    nguoi_ky,
+                    datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                ))
+
+            except Exception as e:
+                print("Lỗi dòng:", index, e)
+
+        conn.commit()
+        conn.close()
+
+        return "✅ Import thành công!"
+
+    return render_template("import_excel.html")
 # =========================
 # chống ngủ server
 # =========================
