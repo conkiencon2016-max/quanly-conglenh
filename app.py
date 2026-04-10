@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 import subprocess
 # ===== THÊM NHỮNG IMPORT BỊ THIẾU =====
+import unicodedata
 import shutil
 import tempfile
 import os
@@ -28,7 +29,6 @@ from openpyxl.utils import get_column_letter
 from flask import after_this_request
 from openpyxl.styles import PatternFill
 from io import BytesIO
-
 
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"] = False
@@ -1623,6 +1623,35 @@ def sua_noiden(id):
     return render_template("sua_noiden.html", row=row)
 
 # ===== import excel =====
+def normalize(text):
+    if not text:
+        return ""
+    text = str(text).lower().strip()
+    text = unicodedata.normalize('NFD', text)
+    text = ''.join(c for c in text if unicodedata.category(c) != 'Mn')
+    return text.replace(" ", "").replace("_","")
+
+
+def map_column(col):
+    col = normalize(col)
+
+    mapping = {
+        "hoten": "ho_ten",
+        "ten": "ho_ten",
+
+        "chucvu": "chuc_vu",
+        "noiden": "noi_den",
+
+        "ngaydi": "ngay_di",
+        "ngayve": "ngay_ve",
+        "ngayky": "ngay_ky",
+
+        "nguoiky": "nguoi_ky"
+    }
+
+    return mapping.get(col, None)
+
+
 @app.route("/import_excel", methods=["GET","POST"])
 def import_excel():
 
@@ -1632,7 +1661,6 @@ def import_excel():
     if request.method == "POST":
 
         file = request.files.get("file")
-
         if not file:
             return "Chưa chọn file!"
 
@@ -1642,21 +1670,36 @@ def import_excel():
 
         df = pd.read_excel(file)
 
+        # ===== MAP CỘT =====
+        col_map = {}
+        for col in df.columns:
+            mapped = map_column(col)
+            if mapped:
+                col_map[col] = mapped
+
+        print("Map cột:", col_map)  # debug
+
+        df = df.rename(columns=col_map)
+
         conn = sqlite3.connect(DB)
         c = conn.cursor()
 
         current_year = datetime.now().year
+        inserted = 0
 
         for index, row in df.iterrows():
             try:
-                ho_ten = str(row["ho_ten"]).strip()
-                chuc_vu = str(row["chuc_vu"]).strip()
-                noi_den = str(row["noi_den"]).strip()
-                nguoi_ky = str(row["nguoi_ky"]).strip()
+                if pd.isna(row.get("ho_ten")):
+                    continue
 
-                ngay_di = pd.to_datetime(row["ngay_di"]).strftime("%Y-%m-%d")
-                ngay_ve = pd.to_datetime(row["ngay_ve"]).strftime("%Y-%m-%d")
-                ngay_ky = pd.to_datetime(row["ngay_ky"]).strftime("%Y-%m-%d")
+                ho_ten = str(row.get("ho_ten","")).strip()
+                chuc_vu = str(row.get("chuc_vu","")).strip()
+                noi_den = str(row.get("noi_den","")).strip()
+                nguoi_ky = str(row.get("nguoi_ky","")).strip()
+
+                ngay_di = pd.to_datetime(row.get("ngay_di")).strftime("%Y-%m-%d")
+                ngay_ve = pd.to_datetime(row.get("ngay_ve")).strftime("%Y-%m-%d")
+                ngay_ky = pd.to_datetime(row.get("ngay_ky")).strftime("%Y-%m-%d")
 
                 so_thu_tu = index + 1
                 so_cong_lenh = f"{so_thu_tu:02}/{current_year}"
@@ -1682,13 +1725,15 @@ def import_excel():
                     datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 ))
 
+                inserted += 1
+
             except Exception as e:
-                print("Lỗi dòng:", index, e)
+                print("❌ Lỗi dòng", index, e)
 
         conn.commit()
         conn.close()
 
-        return "✅ Import thành công!"
+        return f"✅ Import thành công {inserted} dòng!"
 
     return render_template("import_excel.html")
 # =========================
