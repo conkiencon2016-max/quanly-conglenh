@@ -1623,6 +1623,7 @@ def sua_noiden(id):
     return render_template("sua_noiden.html", row=row)
 
 # ===== import excel =====
+import unicodedata
 
 def normalize(text):
     if not text:
@@ -1639,14 +1640,11 @@ def map_column(col):
     mapping = {
         "hoten": "ho_ten",
         "ten": "ho_ten",
-
         "chucvu": "chuc_vu",
         "noiden": "noi_den",
-
         "ngaydi": "ngay_di",
         "ngayve": "ngay_ve",
         "ngayky": "ngay_ky",
-
         "nguoiky": "nguoi_ky"
     }
 
@@ -1665,6 +1663,10 @@ def import_excel():
         if not file:
             return "Chưa chọn file!"
 
+        import pandas as pd
+        import sqlite3
+        from datetime import datetime
+
         df = pd.read_excel(file)
 
         # ===== MAP CỘT =====
@@ -1674,9 +1676,10 @@ def import_excel():
             if mapped:
                 col_map[col] = mapped
 
-        print("Map cột:", col_map)  # debug
-
         df = df.rename(columns=col_map)
+
+        print("Columns:", list(df.columns))
+        print("Map cột:", col_map)
 
         conn = sqlite3.connect(DB)
         c = conn.cursor()
@@ -1684,68 +1687,66 @@ def import_excel():
         current_year = datetime.now().year
         inserted = 0
 
-        def safe_date(val):
-    try:
-        return pd.to_datetime(val).strftime("%Y-%m-%d")
-    except:
-        return None
-
-
-# lấy số thứ tự lớn nhất hiện tại
-c.execute("SELECT COALESCE(MAX(so_thu_tu),0) FROM conglenh")
-current_stt = c.fetchone()[0]
-
-for index, row in df.iterrows():
-    try:
-
-        # bỏ dòng rỗng
-        if pd.isna(row.get("ho_ten")):
-            continue
-
-        ho_ten = str(row.get("ho_ten","")).strip()
-        chuc_vu = str(row.get("chuc_vu","")).strip()
-        noi_den = str(row.get("noi_den","")).strip()
-        nguoi_ky = str(row.get("nguoi_ky","")).strip()
-
         # ===== FIX NGÀY =====
-        ngay_di = safe_date(row.get("ngay_di"))
-        ngay_ve = safe_date(row.get("ngay_ve"))
-        ngay_ky = safe_date(row.get("ngay_ky"))
+        def safe_date(val):
+            try:
+                return pd.to_datetime(val).strftime("%Y-%m-%d")
+            except:
+                return None
 
-        if not ngay_di or not ngay_ve:
-            print("❌ Bỏ dòng lỗi ngày:", index)
-            continue
+        # ===== LẤY STT =====
+        c.execute("SELECT COALESCE(MAX(so_thu_tu),0) FROM conglenh")
+        current_stt = c.fetchone()[0]
 
-        # ===== FIX STT =====
-        current_stt += 1
-        so_thu_tu = current_stt
-        so_cong_lenh = f"{so_thu_tu:02}/{current_year}"
+        # ===== LOOP =====
+        for index, row in df.iterrows():
+            try:
 
-        c.execute("""
-        INSERT INTO conglenh(
-            nam, so_thu_tu, so_cong_lenh,
-            ho_ten, chuc_vu, noi_den,
-            ngay_di, ngay_ve, ngay_ky,
-            nguoi_ky, created_at
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
-        """, (
-            current_year,
-            so_thu_tu,
-            so_cong_lenh,
-            ho_ten,
-            chuc_vu,
-            noi_den,
-            ngay_di,
-            ngay_ve,
-            ngay_ky,
-            nguoi_ky,
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        ))
+                if pd.isna(row.get("ho_ten")):
+                    continue
 
-        inserted += 1
+                ho_ten = str(row.get("ho_ten","")).strip()
+                chuc_vu = str(row.get("chuc_vu","")).strip()
+                noi_den = str(row.get("noi_den","")).strip()
+                nguoi_ky = str(row.get("nguoi_ky","")).strip()
 
-    except Exception as e:
-        print("❌ Lỗi dòng", index, e)
+                ngay_di = safe_date(row.get("ngay_di"))
+                ngay_ve = safe_date(row.get("ngay_ve"))
+                ngay_ky = safe_date(row.get("ngay_ky"))
+
+                if not ngay_di or not ngay_ve:
+                    print("❌ Bỏ dòng lỗi ngày:", index)
+                    continue
+
+                current_stt += 1
+                so_thu_tu = current_stt
+                so_cong_lenh = f"{so_thu_tu:02}/{current_year}"
+
+                c.execute("""
+                INSERT INTO conglenh(
+                    nam, so_thu_tu, so_cong_lenh,
+                    ho_ten, chuc_vu, noi_den,
+                    ngay_di, ngay_ve, ngay_ky,
+                    nguoi_ky, created_at
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                """, (
+                    current_year,
+                    so_thu_tu,
+                    so_cong_lenh,
+                    ho_ten,
+                    chuc_vu,
+                    noi_den,
+                    ngay_di,
+                    ngay_ve,
+                    ngay_ky,
+                    nguoi_ky,
+                    datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                ))
+
+                inserted += 1
+
+            except Exception as e:
+                print("❌ Lỗi dòng", index, e)
 
         conn.commit()
         conn.close()
