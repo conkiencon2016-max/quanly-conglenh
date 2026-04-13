@@ -1719,7 +1719,7 @@ def import_excel():
                     continue
 
                 current_stt += 1
-                so_thu_tu = index + 1
+                so_thu_tu = current_stt
                 so_cong_lenh = f"{so_thu_tu:02}/{current_year}"
 
                 c.execute("""
