@@ -1719,16 +1719,8 @@ def import_excel():
                     continue
 
                 current_stt += 1
-                row_max = c.execute("""
-                    SELECT COALESCE(MAX(so_thu_tu),0)
-                    FROM conglenh
-                    WHERE nam=?
-                """, (current_year,)).fetchone()
-
-                start = row_max[0]
-
-                for index, row in df.iterrows():
-                    so_thu_tu = start + index + 1
+                so_thu_tu = index + 1
+                so_cong_lenh = f"{so_thu_tu:02}/{current_year}"
 
                 c.execute("""
                 INSERT INTO conglenh(
