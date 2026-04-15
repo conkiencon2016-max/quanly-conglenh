@@ -289,19 +289,19 @@ def nhap():
 
              saved_id = c.lastrowid
 
-    conn.commit()
+         conn.commit()
 
-    write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
+         write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
 
-    conn.close()
+         conn.close()
 
-    return render_template(
-        "nhapconglenh.html",
-        so_cong_lenh=so_display,
-        form_data=request.form,
-        saved_id=saved_id,
-        success="Đã lưu thành công!"
-    )
+         return render_template(
+             "nhapconglenh.html",
+             so_cong_lenh=so_display,
+             form_data=request.form,
+             saved_id=saved_id,
+             success="Đã lưu thành công!"
+         )
     # ======================================================
     # ======================= SAVE ==========================
     # ======================================================
