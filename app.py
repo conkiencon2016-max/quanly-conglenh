@@ -259,12 +259,12 @@ def nhap():
     # ======================================================
     if action == "save":
 
-    conn.execute("BEGIN IMMEDIATE")
+        conn.execute("BEGIN IMMEDIATE")
 
-    existing = c.execute("""
-        SELECT id FROM conglenh
-        WHERE nam=? AND so_thu_tu=?
-    """, (current_year, so_thu_tu)).fetchone()
+        existing = c.execute("""
+            SELECT id FROM conglenh
+            WHERE nam=? AND so_thu_tu=?
+        """, (current_year, so_thu_tu)).fetchone()
 
     if existing:
         saved_id = existing["id"]
@@ -294,7 +294,6 @@ def nhap():
 
     conn.commit()
 
-    # ✅ LUÔN LOG (quan trọng)
     write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
 
     conn.close()
