@@ -336,7 +336,10 @@ def nhap():
             ))
 
         conn.commit()
-        write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
+        # ✅ lấy id vừa insert
+        new_id = c.lastrowid
+
+        write_log(f"CREATE conglenh id={new_id} | name={request.form['ho_ten']}")
         # Sinh số mới
         new_number = get_next_number()
         conn.close()
