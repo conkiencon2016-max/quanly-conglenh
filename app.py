@@ -3,6 +3,7 @@ import sqlite3
 from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 import subprocess
+import logging
 # ===== THÊM NHỮNG IMPORT BỊ THIẾU =====
 import unicodedata
 import shutil
@@ -29,7 +30,14 @@ from openpyxl.utils import get_column_letter
 from flask import after_this_request
 from openpyxl.styles import PatternFill
 from io import BytesIO
+# ===== CONFIG LOG =====
+LOG_FILE = "system.log"
 
+logging.basicConfig(
+    filename=LOG_FILE,
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s"
+)
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"] = False
 app.secret_key = "conglenh_secret_key"
@@ -137,11 +145,13 @@ def login():
         conn.close()
 
         if user:
+            write_log("LOGIN SUCCESS")
             session.permanent = True
             session["user"] = user["username"]
             session["role"] = user["role"]
             return redirect("/")
         else:
+            write_log("LOGIN FAILED", "WARNING")
             return render_template("login.html",
                                    error="Sai tài khoản!")
 
@@ -336,7 +346,7 @@ def nhap():
             so_cong_lenh=f"{new_number:02}",
             success="Đã chuyển sang công lệnh mới!"
         )
-
+    write_log(f"CREATE conglenh id={id} | data={dict(request.form)}")
     conn.close()
     return redirect("/nhap")
 
@@ -417,6 +427,7 @@ def xoa(id):
     c = conn.cursor()
     c.execute("DELETE FROM conglenh WHERE id=?", (id,))
     conn.commit()
+    write_log(f"DELETE conglenh id={id} | data={dict(request.form)}")
     conn.close()
     return redirect("/danhsach")
 
@@ -825,6 +836,7 @@ def sua(id):
         ))
 
         conn.commit()
+        write_log(f"UPDATE conglenh id={id} | data={dict(request.form)}")
         conn.close()
         return redirect("/danhsach")
 
@@ -1754,6 +1766,60 @@ def import_excel():
         return f"✅ Import thành công {inserted} dòng!"
 
     return render_template("import_excel.html")
+
+
+# =========================
+# GHI LOG
+# =========================
+def write_log(action, level="INFO"):
+
+    user = session.get("user", "anonymous")
+
+    ip = request.remote_addr if request else "unknown"
+
+    msg = f"user={user} | ip={ip} | action={action}"
+
+    if level == "INFO":
+        logging.info(msg)
+    elif level == "WARNING":
+        logging.warning(msg)
+    elif level == "ERROR":
+        logging.error(msg)
+
+
+@app.route("/api/logs")
+def view_logs():
+
+    if session.get("role") != "admin":
+        return jsonify({"error": "Không có quyền!"})
+
+    level = request.args.get("level", "")
+    keyword = request.args.get("q", "")
+
+    if not os.path.exists("system.log"):
+        return jsonify([])
+
+    with open("system.log", "r") as f:
+        lines = f.readlines()
+
+    lines = lines[::-1]  # đảo ngược (mới nhất lên đầu)
+
+    result = []
+
+    for line in lines:
+
+        if level and level not in line:
+            continue
+
+        if keyword and keyword.lower() not in line.lower():
+            continue
+
+        result.append(line.strip())
+
+        if len(result) >= 100:
+            break
+
+    return jsonify(result)
 # =========================
 # chống ngủ server
 # =========================
