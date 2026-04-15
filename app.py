@@ -256,38 +256,38 @@ def nhap():
     # ======================= SAVE ==========================
     if action == "save":
 
-        conn.execute("BEGIN IMMEDIATE")
+         conn.execute("BEGIN IMMEDIATE")
 
-        existing = c.execute("""
-            SELECT id FROM conglenh
-            WHERE nam=? AND so_thu_tu=?
-        """, (current_year, so_thu_tu)).fetchone()
+         existing = c.execute("""
+             SELECT id FROM conglenh
+             WHERE nam=? AND so_thu_tu=?
+         """, (current_year, so_thu_tu)).fetchone()
 
-        if existing:
-            saved_id = existing["id"]
-        else:
-            c.execute("""
-                INSERT INTO conglenh(
-                    nam, so_thu_tu, so_cong_lenh,
-                    ho_ten, chuc_vu, noi_den,
-                    ngay_di, ngay_ve, ngay_ky,
-                    nguoi_ky, created_at
-                ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
-            """, (
-                current_year,
-                so_thu_tu,
-                so_full,
-                request.form["ho_ten"],
-                request.form["chuc_vu"],
-                request.form["noi_den"],
-                request.form["ngay_di"],
-                request.form["ngay_ve"],
-                request.form["ngay_ky"],
-                request.form["nguoi_ky"],
-                datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            ))
+         if existing:
+             saved_id = existing["id"]
+         else:
+             c.execute("""
+                 INSERT INTO conglenh(
+                     nam, so_thu_tu, so_cong_lenh,
+                     ho_ten, chuc_vu, noi_den,
+                     ngay_di, ngay_ve, ngay_ky,
+                     nguoi_ky, created_at
+                 ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
+             """, (
+                 current_year,
+                 so_thu_tu,
+                 so_full,
+                 request.form["ho_ten"],
+                 request.form["chuc_vu"],
+                 request.form["noi_den"],
+                 request.form["ngay_di"],
+                 request.form["ngay_ve"],
+                 request.form["ngay_ky"],
+                 request.form["nguoi_ky"],
+                 datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+             ))
 
-            saved_id = c.lastrowid
+             saved_id = c.lastrowid
 
     conn.commit()
 
