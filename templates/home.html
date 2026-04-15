@@ -302,38 +302,7 @@ footer {
         <a href="/logout" class="btn btn-danger">Đăng xuất</a>
       </div>
 
-        <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title">📊 Log hệ thống</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-
-      <div class="modal-body">
-
-        <!-- FILTER -->
-        <div class="row mb-2">
-          <div class="col-md-3">
-            <select id="logLevel" class="form-select">
-              <option value="">Tất cả</option>
-              <option value="INFO">INFO</option>
-              <option value="WARNING">WARNING</option>
-              <option value="ERROR">ERROR</option>
-            </select>
-          </div>
-
-          <div class="col-md-6">
-            <input id="logSearch" class="form-control" placeholder="Tìm kiếm...">
-          </div>
-
-          <div class="col-md-3">
-            <button class="btn btn-primary w-100" onclick="loadLogs()">Lọc</button>
-          </div>
-        </div>
-
-        <!-- LOG CONTENT -->
-        <pre id="logContent"
-             style="max-height:500px;overflow:auto;background:#000;color:#0f0;padding:12px;"></pre>
-
-      </div>
+        
     </div>
   </div>
 </div>
@@ -368,5 +337,46 @@ function openLog() {
 setInterval(loadLogs, 5000);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    
+    <!-- LOG MODAL RIÊNG -->
+<div class="modal fade" id="logModal" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title">📊 Log hệ thống</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="row mb-2">
+          <div class="col-md-3">
+            <select id="logLevel" class="form-select">
+              <option value="">Tất cả</option>
+              <option value="INFO">INFO</option>
+              <option value="WARNING">WARNING</option>
+              <option value="ERROR">ERROR</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <input id="logSearch" class="form-control" placeholder="Tìm kiếm...">
+          </div>
+
+          <div class="col-md-3">
+            <button class="btn btn-primary w-100" onclick="loadLogs()">Lọc</button>
+          </div>
+        </div>
+
+        <pre id="logContent"
+             style="max-height:500px;overflow:auto;background:#000;color:#0f0;padding:12px;"></pre>
+
+      </div>
+
+    </div>
+  </div>
+</div>
 </body>
 </html>
