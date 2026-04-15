@@ -73,15 +73,11 @@
        🖨 In
     </a>
 
-<form action="/xoa/{{row['id']}}" method="post" 
-      style="display:inline;"
-      onsubmit="return confirm('Xóa công lệnh này?')">
-
-    <button type="submit" class="btn btn-sm btn-danger">
-        <i class="bi bi-trash"></i>
-    </button>
-
-</form>
+<a href="/xoa/{{row['id']}}"
+   class="btn btn-sm btn-danger"
+   onclick="return confirm('Xóa công lệnh này?')">
+<i class="bi bi-trash"></i>
+</a>
 
 </td>
 </tr>
