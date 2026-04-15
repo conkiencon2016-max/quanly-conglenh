@@ -257,7 +257,7 @@ def nhap():
     # ======================================================
     # ======================= SAVE ==========================
     # ======================================================
-    if action == "next":
+    if action == "save":
 
     conn.execute("BEGIN IMMEDIATE")
 
@@ -267,7 +267,7 @@ def nhap():
     """, (current_year, so_thu_tu)).fetchone()
 
     if existing:
-        new_id = existing["id"]
+        saved_id = existing["id"]
     else:
         c.execute("""
             INSERT INTO conglenh(
@@ -290,21 +290,14 @@ def nhap():
             datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         ))
 
-        new_id = c.lastrowid
+        saved_id = c.lastrowid
 
     conn.commit()
 
-    # ✅ LOG ĐÚNG BIẾN
-    write_log(f"CREATE (NEXT) conglenh id={new_id} | name={request.form['ho_ten']}")
+    # ✅ LUÔN LOG (quan trọng)
+    write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
 
-    new_number = get_next_number()
     conn.close()
-
-    return render_template(
-        "nhapconglenh.html",
-        so_cong_lenh=f"{new_number:02}",
-        success="Đã chuyển sang công lệnh mới!"
-    )
 
     # ======================================================
     # ======================= NEXT ==========================
