@@ -288,9 +288,10 @@ def nhap():
                 request.form["nguoi_ky"],
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             ))
-            conn.commit()
             saved_id = c.lastrowid
-            write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
+        conn.commit()
+           
+        write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
         conn.close()
 
         return render_template(
