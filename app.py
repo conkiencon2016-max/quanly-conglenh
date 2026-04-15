@@ -429,7 +429,7 @@ def change_password():
 
     return render_template("change_password.html")
 # ================= XÓA =================
-@app.route("/xoa/<int:id>", methods=["GET","POST"])
+@app.route("/xoa/<int:id>")
 def xoa(id):
 
     conn = sqlite3.connect(DB)
