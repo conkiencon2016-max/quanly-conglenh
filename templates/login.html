@@ -2,189 +2,203 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<title>Đăng nhập hệ thống</title>
+<title>Đăng nhập - Công lệnh</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="/static/mobile.css">
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
-    margin:0;
-    font-family:Segoe UI,Arial;
-    background:url("/static/19.png") center/cover no-repeat fixed;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    font-family:"Segoe UI",Arial;
     height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(270deg,#1e3a8a,#2563eb,#1e40af);
+    background-size:600% 600%;
+    animation:bgMove 12s ease infinite;
 }
 
-/* overlay làm mờ background */
-
-body::before{
-content:"";
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.35);
-z-index:0;
+/* animation nền */
+@keyframes bgMove{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
 }
 
-/* box login */
-
-.login-box{
-    position:relative;
-    z-index:1;
-    background:rgba(255,255,255,0.96);
-    backdrop-filter:blur(6px);
+/* card */
+.card{
+    width:380px;
+    background:#fff;
     padding:35px;
-    border-radius:16px;
-    width:360px;
-    box-shadow:0 15px 35px rgba(0,0,0,0.35);
-    animation:fadeIn 0.5s ease;
-}
-
-/* animation */
-
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(20px);}
-to{opacity:1;transform:translateY(0);}
-}
-
-/* tiêu đề */
-
-h3{
+    border-radius:18px;
+    box-shadow:0 25px 60px rgba(0,0,0,0.25);
     text-align:center;
-    margin-bottom:5px;
-    color:#1f2937;
+    position:relative;
 }
 
-.subtitle{
-    text-align:center;
+/* dark mode */
+body.dark{
+    background:#0f172a;
+}
+body.dark .card{
+    background:#1e293b;
+    color:#fff;
+}
+body.dark input{
+    background:#0f172a;
+    color:#fff;
+    border:1px solid #334155;
+}
+
+/* logo */
+.logo{
+    width:70px;
+    margin-bottom:10px;
+}
+
+/* title */
+h2{margin-bottom:5px}
+.sub{
     font-size:13px;
-    color:#6b7280;
+    color:#64748b;
     margin-bottom:20px;
 }
 
-/* form */
-
-.form-group{
+/* input */
+.input-group{
+    text-align:left;
     margin-bottom:15px;
+    position:relative;
 }
 
-label{
+.input-group label{
+    font-size:13px;
     font-weight:600;
-    font-size:14px;
-    color:#374151;
 }
 
 input{
     width:100%;
-    padding:10px;
+    padding:12px;
     margin-top:5px;
-    border-radius:8px;
-    border:1px solid #ccc;
-    transition:0.2s;
-    font-size:14px;
-}
-
-input:focus{
-    border-color:#2563EB;
-    box-shadow:0 0 0 2px rgba(37,99,235,0.25);
+    border-radius:10px;
+    border:1px solid #cbd5e1;
     outline:none;
 }
 
-/* button */
+/* show password */
+.toggle-pass{
+    position:absolute;
+    right:10px;
+    top:38px;
+    cursor:pointer;
+    font-size:14px;
+    color:#64748b;
+}
 
-.btn{
+/* button */
+button{
     width:100%;
-    padding:11px;
+    padding:12px;
+    background:#2563eb;
+    color:#fff;
     border:none;
     border-radius:10px;
-    background:linear-gradient(135deg,#2563EB,#1D4ED8);
-    color:white;
     font-weight:600;
     cursor:pointer;
     margin-top:10px;
-    transition:0.2s;
 }
 
-.btn:hover{
-    transform:translateY(-1px);
-    box-shadow:0 5px 12px rgba(0,0,0,0.25);
+button:hover{
+    background:#1d4ed8;
 }
 
 /* error */
-
 .error{
     background:#fee2e2;
-    color:#991b1b;
-    padding:8px;
-    border-radius:6px;
-    text-align:center;
+    color:#b91c1c;
+    padding:10px;
+    border-radius:8px;
     margin-bottom:10px;
     font-size:14px;
 }
 
-/* footer */
+/* dark toggle */
+.dark-toggle{
+    position:absolute;
+    top:10px;
+    right:15px;
+    cursor:pointer;
+}
 
+/* footer */
 .footer{
-    text-align:center;
     margin-top:15px;
     font-size:12px;
-    color:#6b7280;
+    color:#94a3b8;
 }
 
 /* mobile */
-
 @media(max-width:420px){
-
-.login-box{
-width:90%;
-padding:25px;
+.card{
+    width:90%;
+    padding:25px;
 }
-
 }
-
 </style>
 </head>
 
 <body>
 
-<div class="login-box">
+<div class="card">
 
-<h3>🔐 QUẢN LÝ CÔNG LỆNH</h3>
+    <!-- toggle dark -->
+    <div class="dark-toggle" onclick="toggleDark()">🌙</div>
 
+    <!-- logo -->
+    <img src="/static/1.jpg" class="logo">
 
-{% if error %}
-<div class="error">{{ error }}</div>
-{% endif %}
+    <h2>QUẢN LÝ CÔNG LỆNH</h2>
+    <div class="sub">Văn phòng Tỉnh ủy Cà Mau</div>
 
-<form method="post">
+    <!-- ERROR FLASK -->
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
 
-<div class="form-group">
-<label>Tài khoản</label>
-<input name="username" placeholder="Nhập tài khoản" required>
+    <form method="post">
+
+        <div class="input-group">
+            <label>Tên đăng nhập</label>
+            <input type="text" name="username" required>
+        </div>
+
+        <div class="input-group">
+            <label>Mật khẩu</label>
+            <input type="password" id="password" name="password" required>
+            <span class="toggle-pass" onclick="togglePass()">👁</span>
+        </div>
+
+        <button type="submit">Đăng nhập hệ thống</button>
+
+    </form>
+
+    <div class="footer">
+        Phòng Chuyển đổi số - Cơ yếu
+    </div>
+
 </div>
 
-<div class="form-group">
-<label>Mật khẩu</label>
-<input type="password" name="password" placeholder="Nhập mật khẩu" required>
-</div>
+<script>
+function togglePass(){
+    let p = document.getElementById("password");
+    p.type = (p.type === "password") ? "text" : "password";
+}
 
-<button class="btn">Đăng nhập hệ thống</button>
-
-</form>
-
-<div class="footer">
-
-<b>Phòng Chuyển đổi số - Cơ yếu</b><br>
-Văn phòng Tỉnh ủy Cà Mau
-
-</div>
-
-</div>
+function toggleDark(){
+    document.body.classList.toggle("dark");
+}
+</script>
 
 </body>
 </html>
