@@ -294,14 +294,14 @@ def nhap():
 
         write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
 
-    conn.close()
-    return render_template(
+        conn.close()
+        return render_template(
             "nhapconglenh.html",
             so_cong_lenh=so_display,
             form_data=request.form,
             saved_id=saved_id,
             success="Đã lưu thành công!"
-    )
+        )
     # ======================================================
     # ======================= NEXT ==========================
     # ======================================================
