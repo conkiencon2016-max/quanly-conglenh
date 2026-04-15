@@ -290,7 +290,7 @@ def nhap():
             ))
             conn.commit()
             saved_id = c.lastrowid
-
+            write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
         conn.close()
 
         return render_template(
@@ -336,7 +336,7 @@ def nhap():
             ))
 
         conn.commit()
-
+        write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
         # Sinh số mới
         new_number = get_next_number()
         conn.close()
@@ -346,7 +346,7 @@ def nhap():
             so_cong_lenh=f"{new_number:02}",
             success="Đã chuyển sang công lệnh mới!"
         )
-    write_log(f"CREATE conglenh id={id} | data={dict(request.form)}")
+    
     conn.close()
     return redirect("/nhap")
 
@@ -421,13 +421,23 @@ def change_password():
 
     return render_template("change_password.html")
 # ================= XÓA =================
-@app.route("/xoa/<int:id>")
+@app.route("/xoa/<int:id>", methods=["POST"])
 def xoa(id):
+
     conn = sqlite3.connect(DB)
+    conn.row_factory = sqlite3.Row
     c = conn.cursor()
+
+    # ✅ LẤY DỮ LIỆU TRƯỚC KHI XÓA
+    old = c.execute("SELECT * FROM conglenh WHERE id=?", (id,)).fetchone()
+
+    # DELETE
     c.execute("DELETE FROM conglenh WHERE id=?", (id,))
     conn.commit()
-    write_log(f"DELETE conglenh id={id} | data={dict(request.form)}")
+
+    # ✅ LOG CHUẨN
+    write_log(f"DELETE conglenh id={id} | OLD={dict(old) if old else None}", "WARNING")
+
     conn.close()
     return redirect("/danhsach")
 
