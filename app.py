@@ -266,9 +266,9 @@ def nhap():
             WHERE nam=? AND so_thu_tu=?
         """, (current_year, so_thu_tu)).fetchone()
 
-    if existing:
+        if existing:
             saved_id = existing["id"]
-    else:
+        else:
             c.execute("""
                 INSERT INTO conglenh(
                     nam, so_thu_tu, so_cong_lenh,
@@ -292,11 +292,11 @@ def nhap():
 
             saved_id = c.lastrowid
 
-    conn.commit()
+        conn.commit()
 
-    write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
+        write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
 
-    conn.close()
+        conn.close()
 
     # ======================================================
     # ======================= NEXT ==========================
