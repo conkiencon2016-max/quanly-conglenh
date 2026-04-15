@@ -254,7 +254,7 @@ def nhap():
             error="Ngày về không hợp lệ!"
         )
     # ======================= SAVE ==========================
-   if action == "save":
+    if action == "save":
 
         conn.execute("BEGIN IMMEDIATE")
 
