@@ -258,9 +258,7 @@ def nhap():
     # ======================= SAVE ==========================
     # ======================================================
     if action == "save":
-
         conn.execute("BEGIN IMMEDIATE")
-
         existing = c.execute("""
             SELECT id FROM conglenh
             WHERE nam=? AND so_thu_tu=?
@@ -296,7 +294,7 @@ def nhap():
 
         write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
 
-        conn.close()
+    conn.close()
     return render_template(
             "nhapconglenh.html",
             so_cong_lenh=so_display,
