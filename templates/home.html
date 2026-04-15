@@ -265,7 +265,15 @@ footer {
     </a>
 </div>
 {% endif %}
-
+{% if session.get("role") == "admin" %}
+<div class="card">
+    <div>
+        <div class="card-icon">📜</div>
+        <h2>Xem Log hệ thống</h2>
+    </div>
+    <button class="btn btn-dark" onclick="loadLogs()">Xem log</button>
+</div>
+{% endif %}
 </section>
 
 <div>
