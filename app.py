@@ -258,50 +258,54 @@ def nhap():
     # ======================= SAVE ==========================
     # ======================================================
     if action == "save":
-        conn.execute("BEGIN IMMEDIATE")
-        existing = c.execute("""
-            SELECT id FROM conglenh
-            WHERE nam=? AND so_thu_tu=?
-        """, (current_year, so_thu_tu)).fetchone()
 
-        if existing:
-            saved_id = existing["id"]
-        else:
-            c.execute("""
-                INSERT INTO conglenh(
-                    nam, so_thu_tu, so_cong_lenh,
-                    ho_ten, chuc_vu, noi_den,
-                    ngay_di, ngay_ve, ngay_ky,
-                    nguoi_ky, created_at
-                ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
-            """, (
-                current_year,
-                so_thu_tu,
-                so_full,
-                request.form["ho_ten"],
-                request.form["chuc_vu"],
-                request.form["noi_den"],
-                request.form["ngay_di"],
-                request.form["ngay_ve"],
-                request.form["ngay_ky"],
-                request.form["nguoi_ky"],
-                datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            ))
+    conn.execute("BEGIN IMMEDIATE")
 
-            saved_id = c.lastrowid
+    existing = c.execute("""
+        SELECT id FROM conglenh
+        WHERE nam=? AND so_thu_tu=?
+    """, (current_year, so_thu_tu)).fetchone()
 
-        conn.commit()
+    if existing:
+        saved_id = existing["id"]
+    else:
+        c.execute("""
+            INSERT INTO conglenh(
+                nam, so_thu_tu, so_cong_lenh,
+                ho_ten, chuc_vu, noi_den,
+                ngay_di, ngay_ve, ngay_ky,
+                nguoi_ky, created_at
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
+        """, (
+            current_year,
+            so_thu_tu,
+            so_full,
+            request.form["ho_ten"],
+            request.form["chuc_vu"],
+            request.form["noi_den"],
+            request.form["ngay_di"],
+            request.form["ngay_ve"],
+            request.form["ngay_ky"],
+            request.form["nguoi_ky"],
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        ))
 
-        write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
+        saved_id = c.lastrowid
 
-        conn.close()
-        return render_template(
-            "nhapconglenh.html",
-            so_cong_lenh=so_display,
-            form_data=request.form,
-            saved_id=saved_id,
-            success="Đã lưu thành công!"
-        )
+    conn.commit()
+
+    write_log(f"CREATE conglenh id={saved_id} | name={request.form['ho_ten']}")
+
+    conn.close()
+
+    # ✅ RETURN PHẢI NẰM Ở ĐÂY
+    return render_template(
+        "nhapconglenh.html",
+        so_cong_lenh=so_display,
+        form_data=request.form,
+        saved_id=saved_id,
+        success="Đã lưu thành công!"
+    )
     # ======================================================
     # ======================= NEXT ==========================
     # ======================================================
